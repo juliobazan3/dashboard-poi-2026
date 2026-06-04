@@ -3,780 +3,596 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seguimiento POI 2026 — GCPS</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<title>Seguimiento POI 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* ── NUEVA PALETA DE MODO CLARO ──────────────── */
-  --bg: #f4f6f9;               /* Fondo principal gris muy claro */
-  --surface: #ffffff;          /* Tarjetas y contenedores en blanco puro */
-  --surface2: #f8fafc;         /* Encabezados de tablas */
-  --surface3: #e2e8f0;         /* Sub-encabezados oscuros */
-  --border: #e2e8f0;           /* Bordes sutiles claros */
-  --border2: #cbd5e1;          /* Bordes un poco más definidos */
-  --text: #1e293b;             /* Texto principal oscuro (Slate 800) */
-  --text2: #475569;            /* Texto secundario (Slate 600) */
-  --text3: #64748b;            /* Texto atenuado/leyendas (Slate 500) */
-  
-  /* Colores de acento optimizados para fondo claro */
-  --blue: #1d4ed8;
-  --blue2: #3b82f6;
-  --blue-dim: rgba(59, 130, 246, 0.15);
-  --teal: #0f766e;
-  --teal-dim: rgba(13, 148, 136, 0.15);
-  --amber: #b45309;
-  --amber-dim: rgba(245, 158, 11, 0.15);
-  --red: #dc2626;
-  --red-dim: rgba(239, 68, 68, 0.15);
-  --green: #16a34a;
-  --green-dim: rgba(34, 197, 94, 0.15);
-  --purple: #6d28d9;
-  --purple-dim: rgba(139, 92, 246, 0.15);
-  --coral: #c2410c;
-  --coral-dim: rgba(249, 115, 22, 0.15);
-  --r: 10px;
-  --r-lg: 14px;
+  --azul:#1a3a5c; --azulm:#2563a8; --azulc:#3b82f6;
+  --verde:#059669; --naranja:#d97706; --rojo:#dc2626;
+  --gs:#1e293b; --gm:#334155; --gc:#94a3b8;
+  --bg:#f1f5f9; --blanco:#fff; --borde:#e2e8f0;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
-
-/* ── TOP HEADER ─────────────────────────────── */
-.top-header {
-  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-  border-bottom: 1px solid var(--border2);
-  padding: 0 2rem;
-  height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 200;
-}
-.th-left { display: flex; align-items: center; gap: 14px; }
-.th-badge {
-  background: var(--blue2); color: #fff;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  padding: 5px 12px; border-radius: 6px;
-}
-.th-title { font-size: 16px; font-weight: 600; color: var(--text); }
-.th-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
-.th-right { display: flex; align-items: center; gap: 10px; }
-.save-ok { font-size: 12px; color: var(--teal); font-weight: 500; opacity: 0; transition: opacity .3s; }
-.save-ok.show { opacity: 1; }
-.btn-save { background: var(--blue2); color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-family: 'Barlow',sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
-.btn-save:hover { background: #1d4ed8; }
-.btn-reset { background: none; border: 1px solid var(--border2); color: var(--text2); border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer; }
-.btn-reset:hover { background: #f1f5f9; }
-
-/* ── NAV TABS ────────────────────────────────── */
-.nav-tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; gap: 2px; }
-.nav-tab { padding: 12px 18px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Barlow',sans-serif; transition: all .15s; white-space: nowrap; }
-.nav-tab:hover { color: var(--blue); background: #f8fafc; }
-.nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
-
-/* ── LAYOUT ──────────────────────────────────── */
-.page { display: none; padding: 1.5rem 2rem; max-width: 1600px; }
-.page.active { display: block; }
-
-/* ── KPI CARDS ───────────────────────────────── */
-.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 18px; position: relative; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.kpi::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; }
-.kpi.blue::before { background: var(--blue); }
-.kpi.teal::before { background: var(--teal); }
-.kpi.amber::before { background: var(--amber); }
-.kpi.coral::before { background: var(--coral); }
-.kpi.purple::before { background: var(--purple); }
-.kpi.green::before { background: var(--green); }
-.kpi-label { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
-.kpi-val { font-size: 28px; font-weight: 700; font-family: 'Barlow Condensed',sans-serif; }
-.kpi-val.blue { color: var(--blue); }
-.kpi-val.teal { color: var(--teal); }
-.kpi-val.amber { color: var(--amber); }
-.kpi-val.coral { color: var(--coral); }
-.kpi-val.green { color: var(--green); }
-.kpi-val.red { color: var(--red); }
-.kpi-val.purple { color: var(--purple); }
-.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
-
-/* ── SECTION TITLE ───────────────────────────── */
-.sec-title { font-family: 'Barlow Condensed',sans-serif; font-size: 18px; font-weight: 700; letter-spacing: .04em; color: var(--text); margin-bottom: 1rem; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-.sec-title span { display: inline-block; width: 4px; height: 20px; border-radius: 2px; }
-.sec-title span.blue { background: var(--blue); }
-.sec-title span.teal { background: var(--teal); }
-.sec-title span.amber { background: var(--amber); }
-.sec-title span.coral { background: var(--coral); }
-.sec-title span.purple { background: var(--purple); }
-
-/* ── TABLES ──────────────────────────────────── */
-.tbl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.tbl-header { padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
-.tbl-header .hint { font-size: 11px; color: var(--text3); font-weight: 400; }
-.tbl-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 700px; }
-thead th { background: var(--surface2); color: var(--text2); font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
-thead th.left { text-align: left; }
-.th-group { background: #f1f5f9; color: var(--blue); font-size: 10px; letter-spacing: .08em; border-left: 1px solid var(--border); }
-.th-group.teal { color: var(--teal); }
-tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: #f8fafc; }
-tbody tr.total-row { background: #edf2f7; font-weight: 600; border-top: 1px solid var(--border2); }
-tbody td { padding: 9px 10px; text-align: center; color: var(--text); border-left: 1px solid #f1f5f9; }
-tbody td:first-child { border-left: none; }
-tbody td.left { text-align: left; font-weight: 500; color: var(--text); }
-tbody td.dim { color: var(--text3); font-size: 11px; }
-
-/* editable cells */
-.edt { background: rgba(59, 130, 246, 0.08); cursor: pointer; transition: background .15s; border-radius: 4px; }
-.edt:hover { background: rgba(59, 130, 246, 0.18); }
-.edt input { width: 100%; background: transparent; border: none; text-align: center; color: var(--blue); font-family: 'Barlow',sans-serif; font-size: 12px; font-weight: 600; outline: none; padding: 2px; }
-.edt input:focus { background: rgba(59, 130, 246, 0.25); border-radius: 3px; }
-
-/* avance cell */
-.av { font-weight: 600; font-size: 11px; border-radius: 4px; padding: 3px 7px; white-space: nowrap; }
-.av.green { background: var(--green-dim); color: var(--green); }
-.av.amber { background: var(--amber-dim); color: var(--amber); }
-.av.red { background: var(--red-dim); color: var(--red); }
-.av.gray { background: #e2e8f0; color: var(--text3); }
-
-/* ── CHARTS GRID ─────────────────────────────── */
-.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-.charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.chart-card h3 { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1rem; }
-.chart-card .chart-wrap { position: relative; }
-
-/* ── GERENCIA CARDS ──────────────────────────── */
-.ger-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; }
-.ger-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.ger-card-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface2); }
-.ger-card-title { font-family: 'Barlow Condensed',sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .04em; color: var(--text); }
-.ger-card-badge { font-size: 10px; padding: 3px 8px; border-radius: 20px; font-weight: 600; }
-.ger-card-body { padding: 14px 16px; }
-.ger-stat { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.ger-stat-label { font-size: 12px; color: var(--text2); flex: 1; }
-.ger-stat-meta { font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; color: var(--text3); width: 30px; text-align: right; }
-.ger-stat-ejec { font-family: 'Barlow Condensed',sans-serif; font-size: 16px; font-weight: 700; width: 30px; text-align: right; }
-.ger-stat-bar { flex: 2; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
-.ger-stat-fill { height: 100%; border-radius: 3px; transition: width .5s; }
-.ger-stat-pct { font-size: 11px; font-weight: 600; width: 44px; text-align: right; }
-.ger-chart { height: 160px; margin-top: 8px; }
-.ger-avance-anual { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.ger-av-label { font-size: 11px; color: var(--text3); }
-.ger-av-val { font-family: 'Barlow Condensed',sans-serif; font-size: 22px; font-weight: 700; }
-
-/* ── PROGRESS RING ───────────────────────────── */
-.ring-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-.ring-label { font-size: 10px; color: var(--text3); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
-.ring-pct { font-family: 'Barlow Condensed',sans-serif; font-size: 22px; font-weight: 700; }
-
-/* ── RESUMEN OVERVIEW ─────────────────────────── */
-.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-.overview-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.overview-card h3 { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1rem; }
-
-@media(max-width:900px){
-  .charts-row, .charts-row-3, .overview-grid { grid-template-columns: 1fr; }
-  .ger-grid { grid-template-columns: 1fr; }
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--gs);}
+.header{background:linear-gradient(135deg,var(--azul),var(--azulm));color:white;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(26,58,92,.3);}
+.header h1{font-size:17px;font-weight:700;}
+.header p{font-size:11px;opacity:.7;margin-top:2px;}
+.nav{display:flex;gap:8px;}
+.nb{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;transition:.2s;}
+.nb.on{background:white;color:var(--azul);}
+.nb:not(.on){background:rgba(255,255,255,.12);color:white;}
+.nb:hover:not(.on){background:rgba(255,255,255,.22);}
+.panel{display:none;} .panel.on{display:block;}
+.main{max-width:1300px;margin:0 auto;padding:24px 28px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat{background:white;border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--azulc);}
+.stat.v{border-left-color:var(--verde);} .stat.n{border-left-color:var(--naranja);} .stat.r{border-left-color:var(--rojo);}
+.stat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gc);margin-bottom:6px;}
+.stat-val{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--azul);line-height:1;}
+.stat-sub{font-size:11px;color:var(--gc);margin-top:4px;}
+.gblock{background:white;border-radius:14px;padding:22px;margin-bottom:22px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.gtitle{font-size:13px;font-weight:700;color:var(--azul);border-left:4px solid var(--azulc);padding-left:10px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.gtitle span{font-size:11px;font-weight:400;color:var(--gc);}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:#f8fafc;padding:8px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gc);border-bottom:2px solid var(--borde);white-space:nowrap;}
+th.izq{text-align:left;}
+td{padding:9px 10px;border-bottom:1px solid var(--borde);text-align:center;vertical-align:middle;}
+td.izq{text-align:left;font-weight:600;font-size:12px;color:var(--gm);}
+tr:last-child td{border-bottom:none;} tr:hover td{background:#f8fafc;}
+.mnum{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gc);}
+.mtot{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--gm);}
+.ecell{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--azulm);cursor:pointer;padding:6px 10px;border-radius:6px;border:1.5px dashed #bfdbfe;background:#eff6ff;transition:.15s;min-width:44px;display:inline-block;}
+.ecell:hover{background:#dbeafe;border-color:var(--azulc);transform:scale(1.07);}
+.etot{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--azul);}
+.pct{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 7px;border-radius:5px;}
+.pg{background:#d1fae5;color:#065f46;} .pn{background:#fef3c7;color:#92400e;} .pr{background:#fee2e2;color:#991b1b;} .p0{background:#f1f5f9;color:var(--gc);}
+.hm{background:#dbeafe!important;color:#1d4ed8!important;}
+.he{background:#d1fae5!important;color:#065f46!important;}
+.hp{background:#fef3c7!important;color:#92400e!important;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;}
+.overlay.on{display:flex;}
+.modal{background:white;border-radius:16px;padding:28px;width:480px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:pop .2s ease;}
+@keyframes pop{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-title{font-size:15px;font-weight:700;color:var(--azul);margin-bottom:6px;}
+.modal-sub{font-size:12px;color:var(--gc);margin-bottom:20px;}
+.minfo{background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:18px;font-size:12px;}
+.minfo div{margin-bottom:5px;} .minfo div:last-child{margin-bottom:0;}
+.minfo strong{color:var(--azul);}
+.flabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gm);display:block;margin-bottom:6px;}
+.finput{width:100%;padding:10px 14px;border:1.5px solid var(--borde);border-radius:8px;font-family:'Sora',sans-serif;font-size:14px;outline:none;transition:.2s;}
+.finput:focus{border-color:var(--azulc);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+textarea.finput{resize:vertical;min-height:90px;font-size:13px;}
+.mbtns{display:flex;gap:10px;margin-top:20px;}
+.bok{flex:1;background:linear-gradient(135deg,var(--azulm),var(--azulc));color:white;border:none;padding:11px;border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.bok:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(37,99,168,.35);}
+.bok:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.bcan{padding:11px 20px;border:1.5px solid var(--borde);background:white;border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--gm);}
+.bcan:hover{background:var(--bg);}
+.malerta{padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;margin-top:12px;display:none;}
+.malerta.ok{background:#d1fae5;color:#065f46;display:block;}
+.malerta.err{background:#fee2e2;color:#991b1b;display:block;}
+.spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:giro .7s linear infinite;display:none;}
+@keyframes giro{to{transform:rotate(360deg);}}
+.htable{width:100%;border-collapse:collapse;font-size:12px;}
+.htable th{background:#f8fafc;padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gc);border-bottom:2px solid var(--borde);}
+.htable td{padding:10px 12px;border-bottom:1px solid var(--borde);vertical-align:middle;}
+.htable tr:hover td{background:#f8fafc;}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.b1{background:#dbeafe;color:#1d4ed8;} .b2{background:#d1fae5;color:#065f46;}
+.b3{background:#fef3c7;color:#92400e;} .b4{background:#ede9fe;color:#5b21b6;} .b5{background:#e0e7ff;color:#3730a3;}
+.mono{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--azulm);}
+.ts{font-size:10px;color:var(--gc);font-family:'JetBrains Mono',monospace;}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.fsel{padding:6px 11px;border:1.5px solid var(--borde);border-radius:7px;font-family:'Sora',sans-serif;font-size:12px;color:var(--gs);outline:none;cursor:pointer;}
+.empty{text-align:center;padding:40px;color:var(--gc);}
+.btncsv{padding:7px 16px;background:linear-gradient(135deg,#059669,#10b981);color:white;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.btncsv:hover{opacity:.9;}
 </style>
 </head>
 <body>
 
-<header class="top-header">
-  <div class="th-left">
-    <span class="th-badge">POI 2026</span>
-    <div>
-      <div class="th-title">Seguimiento de Actividades del POI 2026</div>
-      <div class="th-sub">GCPS · Consolidado de Ejecución · Actualización dinámica</div>
-    </div>
+<div class="header">
+  <div>
+    <h1>&#x1F4CB; Seguimiento de Actividades POI 2026</h1>
+    <p>Gerencia Central de Prestaciones de Salud &mdash; GCPS &middot; EsSalud &nbsp;|&nbsp; <span id="fhora"></span></p>
   </div>
-  <div class="th-right">
-    <span class="save-ok" id="saveOk">✓ Guardado</span>
-    <button class="btn-reset" onclick="resetData()">↺ Restablecer</button>
-    <button class="btn-save" onclick="saveAll()">💾 Guardar cambios</button>
-  </div>
-</header>
-
-<nav class="nav-tabs">
-  <button class="nav-tab active" onclick="showPage('resumen')">📊 Resumen General</button>
-  <button class="nav-tab" onclick="showPage('formulacion')">📄 Formulación</button>
-  <button class="nav-tab" onclick="showPage('monitoreo')">🔍 Monitoreo/Supervisión</button>
-  <button class="nav-tab" onclick="showPage('asistencia')">🤝 Asistencia Técnica</button>
-  <button class="nav-tab" onclick="showPage('otras')">📋 Otras Actividades</button>
-  <button class="nav-tab" onclick="showPage('gerencias')">🏛 Por Gerencia</button>
-</nav>
-
-<div id="page-resumen" class="page active">
-
-  <div class="kpi-row" id="kpiRow"></div>
-
-  <div class="overview-grid">
-    <div class="overview-card">
-      <h3>Avance anual por sección — GCPS Total</h3>
-      <div style="position:relative; height:260px;"><canvas id="chartOverview1" role="img" aria-label="Avance anual por sección GCPS"></canvas></div>
-    </div>
-    <div class="overview-card">
-      <h3>Ejecución I Trimestre por Gerencia (todas las secciones)</h3>
-      <div style="position:relative; height:260px;"><canvas id="chartOverview2" role="img" aria-label="Ejecución por gerencia"></canvas></div>
-    </div>
-  </div>
-
-  <div class="sec-title"><span class="blue"></span>Resultado Acumulado 2026 — GPNAIS</div>
-  <div id="resumenGPNAIS"></div>
-
-  <div class="sec-title" style="margin-top:1.5rem;"><span class="teal"></span>Resultado Acumulado 2026 — Gerencia de Atención Primaria</div>
-  <div id="resumenGAP"></div>
-
-  <div class="sec-title" style="margin-top:1.5rem;"><span class="amber"></span>Resultado Acumulado 2026 — Gerencia de Salud Ambiental</div>
-  <div id="resumenGSA"></div>
-
-  <div class="sec-title" style="margin-top:1.5rem;"><span class="coral"></span>Resultado Acumulado 2026 — Oficina de Inteligencia e Información Sanitaria</div>
-  <div id="resumenOIIS"></div>
-</div>
-
-<div id="page-formulacion" class="page">
-  <div class="sec-title"><span class="blue"></span>Formulación de Documentos Normativos</div>
-  <div id="tableFormulacion"></div>
-  <div class="charts-row">
-    <div class="chart-card">
-      <h3>Meta vs Ejecución por Gerencia — Formulación</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartForm1" role="img" aria-label="Meta vs ejecución formulación"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>% Avance Anual — Formulación</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartForm2" role="img" aria-label="Avance anual formulación"></canvas></div>
-    </div>
+  <div class="nav">
+    <button class="nb on" onclick="verPanel('consolidado',this)">&#x1F4CA; Consolidado</button>
+    <button class="nb" onclick="verPanel('historial',this)">&#x1F4CB; Historial</button>
   </div>
 </div>
 
-<div id="page-monitoreo" class="page">
-  <div class="sec-title"><span class="teal"></span>Monitoreo / Supervisión</div>
-  <div id="tableMonitoreo"></div>
-  <div class="charts-row">
-    <div class="chart-card">
-      <h3>Meta vs Ejecución por Gerencia — Monitoreo</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartMon1" role="img" aria-label="Meta vs ejecución monitoreo"></canvas></div>
+<!-- PANEL CONSOLIDADO -->
+<div id="panel-consolidado" class="panel on">
+<div class="main">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-lbl">Total ejecutado</div>
+      <div class="stat-val" id="s1">&#x2014;</div>
+      <div class="stat-sub">registros guardados</div>
     </div>
-    <div class="chart-card">
-      <h3>% Avance Anual — Monitoreo</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartMon2" role="img" aria-label="Avance anual monitoreo"></canvas></div>
+    <div class="stat v">
+      <div class="stat-lbl">Hoy</div>
+      <div class="stat-val" id="s2">&#x2014;</div>
+      <div class="stat-sub">ingresos del d&iacute;a</div>
     </div>
-  </div>
-</div>
-
-<div id="page-asistencia" class="page">
-  <div class="sec-title"><span class="amber"></span>Asistencia Técnica</div>
-  <div id="tableAsistencia"></div>
-  <div class="charts-row">
-    <div class="chart-card">
-      <h3>Meta vs Ejecución por Gerencia — Asistencia Técnica</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartAsis1" role="img" aria-label="Meta vs ejecución asistencia técnica"></canvas></div>
+    <div class="stat n">
+      <div class="stat-lbl">T-II 2026</div>
+      <div class="stat-val" id="s3">&#x2014;</div>
+      <div class="stat-sub">ejecuciones trim. actual</div>
     </div>
-    <div class="chart-card">
-      <h3>% Avance Anual — Asistencia Técnica</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartAsis2" role="img" aria-label="Avance anual asistencia técnica"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<div id="page-otras" class="page">
-  <div class="sec-title"><span class="coral"></span>Otras Actividades: Tableros y Estudio de Prevalencia</div>
-  <div id="tableOtras"></div>
-  <div class="charts-row">
-    <div class="chart-card">
-      <h3>Meta vs Ejecución — Otras Actividades</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartOtras1" role="img" aria-label="Meta vs ejecución otras actividades"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>% Avance Anual — Otras Actividades</h3>
-      <div class="chart-wrap" style="height:260px;"><canvas id="chartOtras2" role="img" aria-label="Avance anual otras actividades"></canvas></div>
+    <div class="stat r">
+      <div class="stat-lbl">Usuario activo</div>
+      <div class="stat-val" style="font-size:13px;margin-top:6px;">
+        <select id="usuarioSel" style="padding:5px 8px;border:1.5px solid var(--borde);border-radius:6px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--azul);outline:none;background:white;width:100%;">
+          <option>Julio Baz&aacute;n</option>
+          <option>Wilson Gastulo</option>
+          <option>Jefe GCPS</option>
+          <option>Enlace</option>
+        </select>
+      </div>
+      <div class="stat-sub">selecciona tu nombre</div>
     </div>
   </div>
-</div>
 
-<div id="page-gerencias" class="page">
-  <div class="sec-title"><span class="purple"></span>Avance por Gerencia</div>
-  <div class="ger-grid" id="gerGrid"></div>
-</div>
-
-<script>
-// El script de JS se mantiene idéntico para no perder funcionalidades.
-// El único ajuste interno que requiere Chart.js de modo oscuro a claro es el color de las fuentes de los ejes, configurados automáticamente gracias a los estilos CSS modificados.
-
-const GERENCIAS = ['GPNAIS','GAP','GSAM','OIIS'];
-const GER_COLORS = { GPNAIS: '#3b82f6', GAP: '#0d9488', GSAM: '#d97706', OIIS: '#ea580c' };
-const TRIMS = ['I','II','III','IV'];
-
-const DEFAULT = {
-  secciones: {
-    'FORMULACIÓN': {
-      GPNAIS: { meta:[2,3,11,3,19], ejec:[2,0,0,0,2] },
-      GAP:    { meta:[0,1,2,3,6],   ejec:[0,0,0,0,0] },
-      GSAM:   { meta:[0,1,1,0,2],   ejec:[0,0,0,0,0] },
-      OIIS:   { meta:[0,0,1,0,1],   ejec:[0,0,0,0,0] },
-    },
-    'MONITOREO/SUPERVISIÓN': {
-      GPNAIS: { meta:[3,3,3,2,11],  ejec:[3,1,0,0,4]  },
-      GAP:    { meta:[3,5,4,6,18],  ejec:[6,4,0,0,10] },
-      GSAM:   { meta:[3,7,7,6,23],  ejec:[4,1,0,0,5]  },
-      OIIS:   { meta:[0,0,0,0,0],   ejec:[0,0,0,0,0]  },
-    },
-    'ASISTENCIA TÉCNICA': {
-      GPNAIS: { meta:[16,17,15,20,68], ejec:[21,2,0,0,23] },
-      GAP:    { meta:[3,6,5,4,18],     ejec:[5,0,0,0,5]   },
-      GSAM:   { meta:[3,4,3,5,15],     ejec:[4,1,0,0,5]   },
-      OIIS:   { meta:[1,3,1,0,5],      ejec:[1,0,0,0,1]   },
-    },
-    'OTRAS ACTIVIDADES': {
-      GPNAIS: { meta:[0,0,0,0,0], ejec:[0,0,0,0,0] },
-      GAP:    { meta:[0,0,0,0,0], ejec:[0,0,0,0,0] },
-      GSAM:   { meta:[0,0,0,0,0], ejec:[0,0,0,0,0] },
-      OIIS:   { meta:[1,3,2,0,6], ejec:[1,1,0,0,2] },
-    },
-  },
-  acumulado: {
-    GPNAIS: {
-      cats: ['Formulación Documentos','Supervisión','Asistencia Técnica'],
-      data: [
-        { meta:[2,3,11,3,19],    ejec:[2,0,0,0,2]  },
-        { meta:[3,3,3,2,11],     ejec:[3,1,0,0,4]  },
-        { meta:[16,17,15,20,68], ejec:[21,2,0,0,23] },
-      ]
-    },
-    GAP: {
-      cats: ['Formulación Documentos','Monitoreo/Supervisión','Asistencia Técnica'],
-      data: [
-        { meta:[0,1,2,3,6],  ejec:[0,0,0,0,0] },
-        { meta:[3,5,4,6,18], ejec:[6,4,0,0,10] },
-        { meta:[3,6,5,4,18], ejec:[5,0,0,0,5]  },
-      ]
-    },
-    GSA: {
-      cats: ['Formulación Documentos','Monitoreo/Supervisión','Asistencia Técnica'],
-      data: [
-        { meta:[0,1,1,0,2],  ejec:[0,0,0,0,0] },
-        { meta:[3,7,7,6,23], ejec:[4,1,0,0,5]  },
-        { meta:[3,4,3,5,15], ejec:[4,1,0,0,5]  },
-      ]
-    },
-    OIIS: {
-      cats: ['Formulación Documentos','Monitoreo','Asistencia Técnica','Otras Actividades'],
-      data: [
-        { meta:[0,0,1,0,1], ejec:[0,0,0,0,0] },
-        { meta:[0,0,0,0,0], ejec:[0,0,0,0,0] },
-        { meta:[1,3,1,0,5], ejec:[1,0,0,0,1]  },
-        { meta:[1,3,2,0,6], ejec:[1,1,0,0,2]  },
-      ]
-    }
-  }
-};
-
-let DATA = JSON.parse(localStorage.getItem('poi2026_cons') || 'null') || JSON.parse(JSON.stringify(DEFAULT));
-
-const pct = (e, m) => m > 0 ? e / m : 0;
-const pctStr = (e, m) => m > 0 ? (e/m*100).toFixed(1) + '%' : '—';
-const avClass = (p) => p >= 0.8 ? 'green' : p >= 0.3 ? 'amber' : p > 0 ? 'red' : 'gray';
-
-function avBadge(e, m) {
-  const p = pct(e, m);
-  const cls = avClass(p);
-  return `<span class="av ${cls}">${pctStr(e,m)}</span>`;
-}
-
-let charts = {};
-function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
-
-function buildTable(secKey, containerId, color='blue') {
-  const sec = DATA.secciones[secKey];
-  const container = document.getElementById(containerId);
-  if(!container) return;
-  const rows = [...GERENCIAS, 'TOTAL'];
-
-  const total = { meta:[0,0,0,0,0], ejec:[0,0,0,0,0] };
-  GERENCIAS.forEach(g => {
-    for(let i=0;i<5;i++){
-      total.meta[i] += sec[g].meta[i];
-      total.ejec[i] += sec[g].ejec[i];
-    }
-  });
-
-  let html = `<div class="tbl-card">
-    <div class="tbl-header">
-      <span>${secKey}</span>
-      <span class="hint">✏️ Haz clic en las celdas azules de Ejecución para editar</span>
-    </div>
-    <div class="tbl-wrap">
+  <!-- GPNAIS -->
+  <div class="gblock">
+    <div class="gtitle">RESULTADO ACUMULADO 2026 &mdash; GPNAIS <span>&#x270F;&#xFE0F; Haz clic en los n&uacute;meros azules para registrar ejecuci&oacute;n</span></div>
     <table>
       <thead>
         <tr>
-          <th class="left" rowspan="2">Gerencia</th>
-          <th colspan="5" class="th-group">META TRIMESTRAL (fijo)</th>
-          <th colspan="5" class="th-group teal">EJECUCIÓN (editable)</th>
-          <th colspan="5" class="th-group" style="color:var(--amber);">% AVANCE</th>
+          <th class="izq" rowspan="2">CATEGOR&Iacute;A</th>
+          <th colspan="5" class="hm">META (FIJO)</th>
+          <th colspan="4" class="he">EJECUCI&Oacute;N (EDITABLE)</th>
+          <th class="he">TOTAL</th>
+          <th colspan="5" class="hp">% AVANCE</th>
         </tr>
         <tr>
-          ${TRIMS.map(t=>`<th>T${t}</th>`).join('')}<th>Total</th>
-          ${TRIMS.map(t=>`<th>T${t}</th>`).join('')}<th>Total</th>
-          ${TRIMS.map(t=>`<th>T${t}</th>`).join('')}<th>Anual</th>
+          <th class="hm">I TRIM</th><th class="hm">II</th><th class="hm">III</th><th class="hm">IV</th><th class="hm">TOTAL</th>
+          <th class="he">I TRIM</th><th class="he">II</th><th class="he">III</th><th class="he">IV</th><th class="he"></th>
+          <th class="hp">I TRIM</th><th class="hp">II</th><th class="hp">III</th><th class="hp">IV</th><th class="hp">ANUAL</th>
         </tr>
       </thead>
-      <tbody>`;
+      <tbody id="tb-GPNAIS"></tbody>
+    </table>
+  </div>
 
-  rows.forEach(g => {
-    const isTotal = g === 'TOTAL';
-    const d = isTotal ? total : sec[g];
-    const cls = isTotal ? ' total-row' : '';
-    const gLabel = g === 'GAP' ? 'Ger. Atención Primaria' : g === 'GSAM' ? 'Ger. Salud Ambiental' : g === 'OIIS' ? 'OIIS' : g;
-    html += `<tr class="${cls}">
-      <td class="left">${gLabel}</td>
-      ${d.meta.map(v=>`<td class="dim">${v}</td>`).join('')}`;
-
-    if (isTotal) {
-      html += d.ejec.map(v=>`<td>${v}</td>`).join('');
-    } else {
-      for(let i=0;i<4;i++){
-        html += `<td class="edt"><input type="number" min="0" value="${d.ejec[i]}" data-sec="${secKey}" data-ger="${g}" data-t="${i}" onchange="updateEjec(this)" onfocus="this.select()"></td>`;
-      }
-      const tot = d.ejec.slice(0,4).reduce((a,b)=>a+b,0);
-      html += `<td id="tot-${secKey}-${g}">${tot}</td>`;
-    }
-
-    html += d.meta.map((mv,i) => {
-      const ev = isTotal ? d.ejec[i] : (i < 4 ? d.ejec[i] : d.ejec.slice(0,4).reduce((a,b)=>a+b,0));
-      return `<td>${avBadge(ev, mv)}</td>`;
-    }).join('');
-    html += `</tr>`;
-  });
-
-  html += `</tbody></table></div></div>`;
-  container.innerHTML = html;
-}
-
-function updateEjec(input) {
-  const sec = input.dataset.sec;
-  const ger = input.dataset.ger;
-  const t = parseInt(input.dataset.t);
-  const val = Math.max(0, parseFloat(input.value) || 0);
-  DATA.secciones[sec][ger].ejec[t] = val;
-  input.value = val;
-  const newTot = DATA.secciones[sec][ger].ejec.slice(0,4).reduce((a,b)=>a+b,0);
-  const totCell = document.getElementById(`tot-${sec}-${ger}`);
-  if (totCell) totCell.textContent = newTot;
-  refreshAll();
-}
-
-function buildAcumuladoTable(gerKey, containerId, color='blue') {
-  const gerData = DATA.acumulado[gerKey];
-  const container = document.getElementById(containerId);
-  if(!container) return;
-
-  let html = `<div class="tbl-card">
-    <div class="tbl-header"><span>Resultado Acumulado 2026</span><span class="hint">✏️ Celdas en azul son editables</span></div>
-    <div class="tbl-wrap"><table>
+  <!-- GAPR -->
+  <div class="gblock">
+    <div class="gtitle">RESULTADO ACUMULADO 2026 &mdash; GERENCIA DE ATENCI&Oacute;N PRIMARIA (GAPR)</div>
+    <table>
       <thead>
         <tr>
-          <th class="left" rowspan="2">Categoría</th>
-          <th colspan="5" class="th-group">META (fijo)</th>
-          <th colspan="5" class="th-group teal">EJECUCIÓN (editable)</th>
-          <th colspan="5" class="th-group" style="color:var(--amber);">% AVANCE</th>
+          <th class="izq" rowspan="2">CATEGOR&Iacute;A</th>
+          <th colspan="5" class="hm">META (FIJO)</th>
+          <th colspan="4" class="he">EJECUCI&Oacute;N (EDITABLE)</th>
+          <th class="he">TOTAL</th>
+          <th colspan="5" class="hp">% AVANCE</th>
         </tr>
         <tr>
-          ${['I Trim','II','III','IV','Total'].map(t=>`<th>${t}</th>`).join('')}
-          ${['I Trim','II','III','IV','Total'].map(t=>`<th>${t}</th>`).join('')}
-          ${['I Trim','II','III','IV','Anual'].map(t=>`<th>${t}</th>`).join('')}
+          <th class="hm">I TRIM</th><th class="hm">II</th><th class="hm">III</th><th class="hm">IV</th><th class="hm">TOTAL</th>
+          <th class="he">I TRIM</th><th class="he">II</th><th class="he">III</th><th class="he">IV</th><th class="he"></th>
+          <th class="hp">I TRIM</th><th class="hp">II</th><th class="hp">III</th><th class="hp">IV</th><th class="hp">ANUAL</th>
         </tr>
-      </thead><tbody>`;
+      </thead>
+      <tbody id="tb-GAPR"></tbody>
+    </table>
+  </div>
 
-  gerData.cats.forEach((cat, ci) => {
-    const d = gerData.data[ci];
-    html += `<tr>
-      <td class="left" style="font-size:11px;">${cat}</td>
-      ${d.meta.map(v=>`<td class="dim">${v}</td>`).join('')}`;
-    for(let i=0;i<4;i++){
-      html += `<td class="edt"><input type="number" min="0" value="${d.ejec[i]}" data-ger="${gerKey}" data-ci="${ci}" data-t="${i}" onchange="updateAcum(this)" onfocus="this.select()"></td>`;
-    }
-    const tot = d.ejec.slice(0,4).reduce((a,b)=>a+b,0);
-    html += `<td id="acumtot-${gerKey}-${ci}">${tot}</td>`;
-    html += d.meta.map((mv,i) => {
-      const ev = i<4 ? d.ejec[i] : d.ejec.slice(0,4).reduce((a,b)=>a+b,0);
-      return `<td>${avBadge(ev,mv)}</td>`;
-    }).join('');
-    html += `</tr>`;
-  });
+  <!-- GSAM -->
+  <div class="gblock">
+    <div class="gtitle">RESULTADO ACUMULADO 2026 &mdash; GERENCIA DE SALUD AMBIENTAL (GSAM)</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="izq" rowspan="2">CATEGOR&Iacute;A</th>
+          <th colspan="5" class="hm">META (FIJO)</th>
+          <th colspan="4" class="he">EJECUCI&Oacute;N (EDITABLE)</th>
+          <th class="he">TOTAL</th>
+          <th colspan="5" class="hp">% AVANCE</th>
+        </tr>
+        <tr>
+          <th class="hm">I TRIM</th><th class="hm">II</th><th class="hm">III</th><th class="hm">IV</th><th class="hm">TOTAL</th>
+          <th class="he">I TRIM</th><th class="he">II</th><th class="he">III</th><th class="he">IV</th><th class="he"></th>
+          <th class="hp">I TRIM</th><th class="hp">II</th><th class="hp">III</th><th class="hp">IV</th><th class="hp">ANUAL</th>
+        </tr>
+      </thead>
+      <tbody id="tb-GSAM"></tbody>
+    </table>
+  </div>
 
-  html += `</tbody></table></div></div>`;
-  container.innerHTML = html;
-}
+  <!-- OIIS -->
+  <div class="gblock">
+    <div class="gtitle">RESULTADO ACUMULADO 2026 &mdash; OFICINA DE INTELIGENCIA E INFORMACI&Oacute;N SANITARIA (OIIS)</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="izq" rowspan="2">CATEGOR&Iacute;A</th>
+          <th colspan="5" class="hm">META (FIJO)</th>
+          <th colspan="4" class="he">EJECUCI&Oacute;N (EDITABLE)</th>
+          <th class="he">TOTAL</th>
+          <th colspan="5" class="hp">% AVANCE</th>
+        </tr>
+        <tr>
+          <th class="hm">I TRIM</th><th class="hm">II</th><th class="hm">III</th><th class="hm">IV</th><th class="hm">TOTAL</th>
+          <th class="he">I TRIM</th><th class="he">II</th><th class="he">III</th><th class="he">IV</th><th class="he"></th>
+          <th class="hp">I TRIM</th><th class="hp">II</th><th class="hp">III</th><th class="hp">IV</th><th class="hp">ANUAL</th>
+        </tr>
+      </thead>
+      <tbody id="tb-OIIS"></tbody>
+    </table>
+  </div>
 
-function updateAcum(input) {
-  const ger = input.dataset.ger;
-  const ci = parseInt(input.dataset.ci);
-  const t = parseInt(input.dataset.t);
-  const val = Math.max(0, parseFloat(input.value) || 0);
-  DATA.acumulado[ger].data[ci].ejec[t] = val;
-  input.value = val;
-  const tot = DATA.acumulado[ger].data[ci].ejec.slice(0,4).reduce((a,b)=>a+b,0);
-  const el = document.getElementById(`acumtot-${ger}-${ci}`);
-  if (el) el.textContent = tot;
-  refreshAll();
-}
+</div>
+</div>
 
-function renderKPIs() {
-  const totMeta = {}, totEjec = {};
-  Object.keys(DATA.secciones).forEach(sec => {
-    GERENCIAS.forEach(g => {
-      totMeta[g] = (totMeta[g]||0) + DATA.secciones[sec][g].meta[4];
-      totEjec[g] = (totEjec[g]||0) + DATA.secciones[sec][g].ejec.slice(0,4).reduce((a,b)=>a+b,0);
-    });
-  });
-
-  const allMeta = Object.values(totMeta).reduce((a,b)=>a+b,0);
-  const allEjec = Object.values(totEjec).reduce((a,b)=>a+b,0);
-  const avAnual = pct(allEjec, allMeta);
-
-  const colors = {GPNAIS:'blue', GAP:'teal', GSAM:'amber', OIIS:'coral'};
-
-  document.getElementById('kpiRow').innerHTML = `
-    <div class="kpi blue">
-      <div class="kpi-label">Meta Anual Total</div>
-      <div class="kpi-val blue">${allMeta}</div>
-      <div class="kpi-sub">Actividades programadas GCPS</div>
+<!-- PANEL HISTORIAL -->
+<div id="panel-historial" class="panel">
+<div class="main">
+  <div class="gblock">
+    <div class="gtitle">Historial Completo de Registros</div>
+    <div class="filtros">
+      <select class="fsel" id="fg" onchange="cargarHistorial()">
+        <option value="">Todas las gerencias</option>
+        <option>GPNAIS</option><option>GSAM</option><option>GAPR</option><option>OIIS</option>
+      </select>
+      <select class="fsel" id="ft" onchange="cargarHistorial()">
+        <option value="">Todos los tipos</option>
+        <option>Formulaci&oacute;n</option><option>Monitoreo</option>
+        <option>Asistencia T&eacute;cnica</option><option>Otras Actividades</option>
+      </select>
+      <select class="fsel" id="ftr" onchange="cargarHistorial()">
+        <option value="">Todos los trimestres</option>
+        <option>T-I 2026</option><option>T-II 2026</option>
+        <option>T-III 2026</option><option>T-IV 2026</option>
+      </select>
+      <button class="btncsv" onclick="exportarCSV()">&#x2B07;&#xFE0F; Descargar Excel/CSV</button>
+      <span id="conteo" style="font-size:12px;color:var(--gc);align-self:center;"></span>
     </div>
-    <div class="kpi teal">
-      <div class="kpi-label">Ejecutado Total</div>
-      <div class="kpi-val teal">${allEjec}</div>
-      <div class="kpi-sub">Avance: ${pctStr(allEjec, allMeta)}</div>
+    <div id="histBody"><div class="empty">&#x23F3; Cargando...</div></div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-title">&#x270F;&#xFE0F; Registrar Ejecuci&oacute;n</div>
+    <div class="modal-sub">Los datos se guardar&aacute;n con fecha y hora autom&aacute;tica.</div>
+    <div class="minfo">
+      <div><strong>Gerencia:</strong> <span id="mg"></span></div>
+      <div><strong>Actividad:</strong> <span id="mt"></span></div>
+      <div><strong>Trimestre:</strong> <span id="mtr"></span></div>
+      <div><strong>Ejecuci&oacute;n actual:</strong> <span id="ma" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--azulm);"></span></div>
     </div>
-    ${GERENCIAS.map(g => `<div class="kpi ${colors[g]}">
-      <div class="kpi-label">${g}</div>
-      <div class="kpi-val ${colors[g]}">${pctStr(totEjec[g]||0, totMeta[g]||0)}</div>
-      <div class="kpi-sub">${totEjec[g]||0} / ${totMeta[g]||0} actividades</div>
-    </div>`).join('')}
-    <div class="kpi ${avAnual>=0.8?'green':avAnual>=0.3?'amber':'coral'}">
-      <div class="kpi-label">Avance Global</div>
-      <div class="kpi-val ${avAnual>=0.8?'green':avAnual>=0.3?'amber':'coral'}">${(avAnual*100).toFixed(1)}%</div>
-      <div class="kpi-sub">I Trim. 2026</div>
+    <div style="margin-bottom:14px;">
+      <label class="flabel">Cantidad a agregar *</label>
+      <input type="number" id="mcant" class="finput" min="1" max="99" placeholder="Ej: 1" />
     </div>
-  `;
-}
+    <div>
+      <label class="flabel">Sustento *</label>
+      <textarea id="msust" class="finput" maxlength="800"
+        oninput="document.getElementById('ccount').textContent=this.value.length"
+        placeholder="Describe qu&eacute; se ejecut&oacute;, N&deg; de documento, fecha de actividad, etc."></textarea>
+      <div style="text-align:right;font-size:10px;color:var(--gc);margin-top:3px;"><span id="ccount">0</span>/800 caracteres</div>
+    </div>
+    <div id="malerta" class="malerta"></div>
+    <div class="mbtns">
+      <button class="bcan" onclick="cerrarModal()">Cancelar</button>
+      <button class="bok" id="bok" onclick="guardarRegistro()">
+        <div class="spin" id="spin"></div>
+        <span id="boktxt">&#x1F4BE; Guardar</span>
+      </button>
+    </div>
+  </div>
+</div>
 
-function buildSectionCharts(secKey, c1id, c2id) {
-  const sec = DATA.secciones[secKey];
-  const labels = GERENCIAS.map(g=>g==='GAP'?'Ger.At.Prim':g==='GSAM'?'Ger.Sal.Amb':g);
-  const metas = GERENCIAS.map(g=>sec[g].meta[4]);
-  const ejecs = GERENCIAS.map(g=>sec[g].ejec.slice(0,4).reduce((a,b)=>a+b,0));
-  const pcts = GERENCIAS.map(g=>{ const e=sec[g].ejec.slice(0,4).reduce((a,b)=>a+b,0); return sec[g].meta[4]>0?+(e/sec[g].meta[4]*100).toFixed(1):0; });
+<script>
+var SURL = 'https://krikgncyptyjjutzaufz.supabase.co';
+var SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtyaWtnbmN5cHR5amp1dHphdWZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NzYzOTYsImV4cCI6MjA5NjE1MjM5Nn0.8Kzgpf8UhASf-hgN7jix-82ZeNsUpE7R-EF6zpZCZCI';
 
-  destroyChart(c1id); destroyChart(c2id);
-
-  const ctx1 = document.getElementById(c1id);
-  if(ctx1) {
-    charts[c1id] = new Chart(ctx1, {
-      type:'bar',
-      data:{
-        labels,
-        datasets:[
-          {label:'Meta Anual',data:metas,backgroundColor:'rgba(59, 130, 246, 0.2)',borderColor:'#3b82f6',borderWidth:1.5,borderRadius:4},
-          {label:'Ejecutado',data:ejecs,backgroundColor:GERENCIAS.map(g=>GER_COLORS[g]+'cc'),borderColor:GERENCIAS.map(g=>GER_COLORS[g]),borderWidth:1.5,borderRadius:4}
-        ]
-      },
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:true,position:'top',labels:{color:'#475569',font:{size:11},boxWidth:10,padding:12}}},
-        scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#f1f5f9'}},
-                y:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#cbd5e1'},beginAtZero:true}}
-      }
-    });
-  }
-
-  const ctx2 = document.getElementById(c2id);
-  if(ctx2) {
-    charts[c2id] = new Chart(ctx2, {
-      type:'doughnut',
-      data:{
-        labels: GERENCIAS.map(g=>g==='GAP'?'G.At.Prim':g==='GSAM'?'G.Sal.Amb':g),
-        datasets:[{data:pcts,backgroundColor:GERENCIAS.map(g=>GER_COLORS[g]+'cc'),borderColor:'#ffffff',borderWidth:2,hoverOffset:6}]
-      },
-      options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
-        plugins:{legend:{position:'bottom',labels:{color:'#475569',font:{size:11},boxWidth:10,padding:10}},
-          tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed.toFixed(1)}%`}}}
-      }
-    });
-  }
-}
-
-function buildOverviewCharts() {
-  const secs = Object.keys(DATA.secciones);
-  const secLabels = secs.map(s=>s.length>20?s.substring(0,18)+'…':s);
-  const secPcts = secs.map(sec => {
-    let tm=0,te=0;
-    GERENCIAS.forEach(g=>{ tm+=DATA.secciones[sec][g].meta[4]; te+=DATA.secciones[sec][g].ejec.slice(0,4).reduce((a,b)=>a+b,0); });
-    return tm>0?+(te/tm*100).toFixed(1):0;
-  });
-
-  destroyChart('chartOverview1');
-  const ctx1 = document.getElementById('chartOverview1');
-  if(ctx1) {
-    charts['chartOverview1'] = new Chart(ctx1, {
-      type:'bar',
-      data:{labels:secLabels,datasets:[{label:'% Avance Anual',data:secPcts,
-        backgroundColor:secPcts.map(v=>v>=80?'rgba(22, 163, 74, 0.7)':v>=30?'rgba(217, 119, 6, 0.7)':'rgba(220, 38, 38, 0.7)'),
-        borderColor:secPcts.map(v=>v>=80?'#16a34a':v>=30?'#d97706':'#dc2626'),
-        borderWidth:1.5,borderRadius:6}]},
-      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Avance: ${ctx.parsed.x.toFixed(1)}%`}}},
-        scales:{x:{max:150,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#cbd5e1'}},
-                y:{ticks:{color:'#475569',font:{size:11}},grid:{color:'#f1f5f9'}}}
-      }
-    });
-  }
-
-  const gerMeta = {}, gerEjec = {};
-  GERENCIAS.forEach(g=>{ gerMeta[g]=0; gerEjec[g]=0; });
-  Object.keys(DATA.secciones).forEach(sec=>{
-    GERENCIAS.forEach(g=>{
-      gerMeta[g]+=DATA.secciones[sec][g].meta[4];
-      gerEjec[g]+=DATA.secciones[sec][g].ejec.slice(0,4).reduce((a,b)=>a+b,0);
-    });
-  });
-  const gerLabels = GERENCIAS.map(g=>g==='GAP'?'G.At.Primaria':g==='GSAM'?'G.Sal.Amb':g);
-
-  destroyChart('chartOverview2');
-  const ctx2 = document.getElementById('chartOverview2');
-  if(ctx2) {
-    charts['chartOverview2'] = new Chart(ctx2, {
-      type:'bar',
-      data:{labels:gerLabels,datasets:[
-        {label:'Meta Anual',data:GERENCIAS.map(g=>gerMeta[g]),backgroundColor:'rgba(59, 130, 246, 0.2)',borderColor:'#3b82f6',borderWidth:1.5,borderRadius:4},
-        {label:'Ejecutado',data:GERENCIAS.map(g=>gerEjec[g]),backgroundColor:GERENCIAS.map(g=>GER_COLORS[g]+'cc'),borderColor:GERENCIAS.map(g=>GER_COLORS[g]),borderWidth:1.5,borderRadius:4}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:true,position:'top',labels:{color:'#475569',font:{size:11},boxWidth:10,padding:10}}},
-        scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#f1f5f9'}},
-                y:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'#cbd5e1'},beginAtZero:true}}
-      }
-    });
-  }
-}
-
-function buildGerenciasPage() {
-  const container = document.getElementById('gerGrid');
-  if(!container) return;
-  
-  const GER_INFO = {
-    GPNAIS: { name:'Gerencia de Políticas y Normas de Atención Integral de Salud', label: 'GPNAIS' },
-    GAP: { name:'Gerencia de Atención Primaria de Salud', label: 'GAP' },
-    GSAM: { name:'Gerencia de Salud Ambiental', label: 'GSAM' },
-    OIIS: { name:'Oficina de Inteligencia e Información Sanitaria', label: 'OIIS' }
-  };
-
-  let html = '';
-  GERENCIAS.forEach(g => {
-    let tm=0, te=0;
-    Object.keys(DATA.secciones).forEach(sec => {
-      tm += DATA.secciones[sec][g].meta[4];
-      te += DATA.secciones[sec][g].ejec.slice(0,4).reduce((a,b)=>a+b,0);
-    });
-    const p = pct(te, tm);
-
-    html += `<div class="ger-card">
-      <div class="ger-card-header">
-        <div class="ger-card-title">${GER_INFO[g].name}</div>
-        <span class="ger-card-badge" style="background:${GER_COLORS[g]+'22'};color:${GER_COLORS[g]}">${GER_INFO[g].label}</span>
-      </div>
-      <div class="ger-card-body">
-        <div class="ger-avance-anual">
-          <span class="ger-av-label">Avance Global Consolidad</span>
-          <span class="ger-av-val" style="color:${GER_COLORS[g]}">${(p*100).toFixed(1)}%</span>
-        </div>
-        <div class="ger-stat" style="margin-top:10px;">
-          <span class="ger-stat-label">Metas vs Ejecución</span>
-          <div class="ger-stat-bar">
-            <div class="ger-stat-fill" style="width:${Math.min(100, p*100)}%; background:${GER_COLORS[g]}"></div>
-          </div>
-          <span class="ger-stat-pct" style="color:var(--text); font-weight:600;">${te}/${tm}</span>
-        </div>
-      </div>
-    </div>`;
-  });
-  container.innerHTML = html;
-}
-
-function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  
-  const targetPage = document.getElementById(`page-${pageId}`);
-  if(targetPage) targetPage.classList.add('active');
-  
-  // Buscar el botón correspondiente por su parámetro onclick
-  const tabs = document.querySelectorAll('.nav-tab');
-  tabs.forEach(tab => {
-    if(tab.getAttribute('onclick').includes(pageId)) {
-      tab.classList.add('active');
-    }
-  });
-
-  if(pageId === 'resumen') {
-    buildOverviewCharts();
-  } else if(pageId === 'formulacion') {
-    buildSectionCharts('FORMULACIÓN', 'chartForm1', 'chartForm2');
-  } else if(pageId === 'monitoreo') {
-    buildSectionCharts('MONITOREO/SUPERVISIÓN', 'chartMon1', 'chartMon2');
-  } else if(pageId === 'asistencia') {
-    buildSectionCharts('ASISTENCIA TÉCNICA', 'chartAsis1', 'chartAsis2');
-  } else if(pageId === 'otras') {
-    buildSectionCharts('OTRAS ACTIVIDADES', 'chartOtras1', 'chartOtras2');
-  } else if(pageId === 'gerencias') {
-    buildGerenciasPage();
-  }
-}
-
-function refreshAll() {
-  renderKPIs();
-  buildTable('FORMULACIÓN', 'tableFormulacion');
-  buildTable('MONITOREO/SUPERVISIÓN', 'tableMonitoreo');
-  buildTable('ASISTENCIA TÉCNICA', 'tableAsistencia');
-  buildTable('OTRAS ACTIVIDADES', 'tableOtras');
-
-  buildAcumuladoTable('GPNAIS', 'resumenGPNAIS');
-  buildAcumuladoTable('GAP', 'resumenGAP');
-  buildAcumuladoTable('GSA', 'resumenGSA');
-  buildAcumuladoTable('OIIS', 'resumenOIIS');
-
-  const activePage = document.querySelector('.page.active');
-  if(activePage) {
-    const id = activePage.id.replace('page-', '');
-    if(id === 'resumen') buildOverviewCharts();
-    if(id === 'formulacion') buildSectionCharts('FORMULACIÓN', 'chartForm1', 'chartForm2');
-    if(id === 'monitoreo') buildSectionCharts('MONITOREO/SUPERVISIÓN', 'chartMon1', 'chartMon2');
-    if(id === 'asistencia') buildSectionCharts('ASISTENCIA TÉCNICA', 'chartAsis1', 'chartAsis2');
-    if(id === 'otras') buildSectionCharts('OTRAS ACTIVIDADES', 'chartOtras1', 'chartOtras2');
-    if(id === 'gerencias') buildGerenciasPage();
-  }
-}
-
-function saveAll() {
-  localStorage.setItem('poi2026_cons', JSON.stringify(DATA));
-  const s = document.getElementById('saveOk');
-  if(s) {
-    s.classList.add('show');
-    setTimeout(() => s.classList.remove('show'), 2000);
-  }
-}
-
-function resetData() {
-  if(confirm('¿Restablecer los valores originales?')) {
-    DATA = JSON.parse(JSON.stringify(DEFAULT));
-    localStorage.removeItem('poi2026_cons');
-    refreshAll();
-  }
-}
-
-window.onload = function() {
-  // Corregir cierre de corchete que faltaba al final del script original
-  refreshAll();
+var METAS = {
+  GPNAIS: [
+    {cat:'Formulacion Documentos', m:[2,3,11,3]},
+    {cat:'Supervision',            m:[3,3,3,2]},
+    {cat:'Asistencia Tecnica',     m:[16,17,15,20]}
+  ],
+  GAPR: [
+    {cat:'Formulacion Documentos', m:[0,1,2,3]},
+    {cat:'Monitoreo/Supervision',  m:[3,5,4,6]},
+    {cat:'Asistencia Tecnica',     m:[3,6,5,4]}
+  ],
+  GSAM: [
+    {cat:'Formulacion Documentos', m:[0,1,1,0]},
+    {cat:'Monitoreo/Supervision',  m:[3,7,7,6]},
+    {cat:'Asistencia Tecnica',     m:[3,4,3,5]}
+  ],
+  OIIS: [
+    {cat:'Formulacion Documentos', m:[0,0,1,0]},
+    {cat:'Asistencia Tecnica',     m:[1,3,1,0]},
+    {cat:'Otras Actividades',      m:[1,3,2,0]}
+  ]
 };
+
+var TRIMS = ['T-I 2026','T-II 2026','T-III 2026','T-IV 2026'];
+var TMAP = {
+  'Formulacion Documentos':'Formulacion',
+  'Supervision':'Monitoreo',
+  'Monitoreo/Supervision':'Monitoreo',
+  'Asistencia Tecnica':'Asistencia Tecnica',
+  'Otras Actividades':'Otras Actividades'
+};
+var CATS_DISPLAY = {
+  'Formulacion Documentos':'Formulaci\u00f3n Documentos',
+  'Supervision':'Supervisi\u00f3n',
+  'Monitoreo/Supervision':'Monitoreo/Supervisi\u00f3n',
+  'Asistencia Tecnica':'Asistencia T\u00e9cnica',
+  'Otras Actividades':'Otras Actividades'
+};
+
+var ejecDB = {};
+var modalCtx = null;
+var histCache = [];
+
+setInterval(function() {
+  var el = document.getElementById('fhora');
+  if (el) {
+    el.textContent = new Date().toLocaleString('es-PE', {
+      weekday:'short', day:'2-digit', month:'short', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+  }
+}, 1000);
+
+function apiGet(path) {
+  return fetch(SURL + '/rest/v1/' + path, {
+    headers: {
+      'apikey': SKEY,
+      'Authorization': 'Bearer ' + SKEY
+    }
+  }).then(function(r) { return r.json(); });
+}
+
+function apiPost(data) {
+  return fetch(SURL + '/rest/v1/ejecucion_poi', {
+    method: 'POST',
+    headers: {
+      'apikey': SKEY,
+      'Authorization': 'Bearer ' + SKEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.ok; });
+}
+
+function cargarDatos() {
+  apiGet('ejecucion_poi?select=gerencia,tipo_actividad,trimestre,cantidad,fecha_hora').then(function(rows) {
+    if (!Array.isArray(rows)) return;
+    ejecDB = {};
+    var hoy = new Date().toISOString().split('T')[0];
+    var totalHoy = 0;
+    var totalTII = 0;
+    rows.forEach(function(r) {
+      var ti = TRIMS.indexOf(r.trimestre);
+      if (ti < 0) return;
+      var k = r.gerencia + '_' + r.tipo_actividad + '_' + ti;
+      ejecDB[k] = (ejecDB[k] || 0) + r.cantidad;
+      if (r.fecha_hora && r.fecha_hora.indexOf(hoy) === 0) totalHoy++;
+      if (r.trimestre === 'T-II 2026') totalTII++;
+    });
+    document.getElementById('s1').textContent = rows.length;
+    document.getElementById('s2').textContent = totalHoy;
+    document.getElementById('s3').textContent = totalTII;
+    ['GPNAIS','GAPR','GSAM','OIIS'].forEach(renderTabla);
+  }).catch(function() {
+    ['GPNAIS','GAPR','GSAM','OIIS'].forEach(renderTabla);
+  });
+}
+
+function getEjec(ger, cat, ti) {
+  var tipo = TMAP[cat] || cat;
+  return ejecDB[ger + '_' + tipo + '_' + ti] || 0;
+}
+
+function pctBadge(e, m) {
+  if (!m) return '<span class="pct p0">&mdash;</span>';
+  var p = (e / m * 100).toFixed(1);
+  var cls = parseFloat(p) >= 100 ? 'pg' : parseFloat(p) >= 50 ? 'pn' : 'pr';
+  return '<span class="pct ' + cls + '">' + p + '%</span>';
+}
+
+function renderTabla(ger) {
+  var tbody = document.getElementById('tb-' + ger);
+  if (!tbody) return;
+  var html = '';
+  METAS[ger].forEach(function(row) {
+    var tipo = TMAP[row.cat] || row.cat;
+    var mTotal = row.m.reduce(function(a,b){return a+b;}, 0);
+    var eArr = row.m.map(function(_, ti) { return getEjec(ger, row.cat, ti); });
+    var eTotal = eArr.reduce(function(a,b){return a+b;}, 0);
+    var display = CATS_DISPLAY[row.cat] || row.cat;
+    html += '<tr><td class="izq">' + display + '</td>';
+    row.m.forEach(function(v) { html += '<td><span class="mnum">' + v + '</span></td>'; });
+    html += '<td><span class="mtot">' + mTotal + '</span></td>';
+    eArr.forEach(function(e, ti) {
+      var trimLabel = TRIMS[ti];
+      html += '<td><span class="ecell" onclick="abrirModal(\'' + ger + '\',\'' + tipo + '\',\'' + display + '\',\'' + trimLabel + '\',' + ti + ',' + e + ')">' + e + '</span></td>';
+    });
+    html += '<td><span class="etot">' + eTotal + '</span></td>';
+    row.m.forEach(function(_, ti) { html += '<td>' + pctBadge(eArr[ti], row.m[ti]) + '</td>'; });
+    html += '<td>' + pctBadge(eTotal, mTotal) + '</td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function abrirModal(ger, tipo, catDisplay, trim, ti, actual) {
+  modalCtx = {ger:ger, tipo:tipo, catDisplay:catDisplay, trim:trim, ti:ti};
+  document.getElementById('mg').textContent = ger;
+  document.getElementById('mt').textContent = catDisplay;
+  document.getElementById('mtr').textContent = trim;
+  document.getElementById('ma').textContent = actual;
+  document.getElementById('mcant').value = '';
+  document.getElementById('msust').value = '';
+  document.getElementById('ccount').textContent = '0';
+  var al = document.getElementById('malerta');
+  al.className = 'malerta';
+  al.textContent = '';
+  document.getElementById('overlay').classList.add('on');
+  setTimeout(function() { document.getElementById('mcant').focus(); }, 100);
+}
+
+function cerrarModal() {
+  document.getElementById('overlay').classList.remove('on');
+}
+
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+function guardarRegistro() {
+  var cant = parseInt(document.getElementById('mcant').value);
+  var sust = document.getElementById('msust').value.trim();
+  var al = document.getElementById('malerta');
+  if (!cant || cant < 1) {
+    al.className = 'malerta err';
+    al.textContent = 'Ingresa una cantidad v\u00e1lida (m\u00ednimo 1).';
+    return;
+  }
+  if (!sust) {
+    al.className = 'malerta err';
+    al.textContent = 'El sustento es obligatorio.';
+    return;
+  }
+  var btn = document.getElementById('bok');
+  var sp = document.getElementById('spin');
+  var tx = document.getElementById('boktxt');
+  btn.disabled = true;
+  sp.style.display = 'block';
+  tx.textContent = 'Guardando...';
+  var usuario = document.getElementById('usuarioSel').value;
+  apiPost({
+    gerencia: modalCtx.ger,
+    tipo_actividad: modalCtx.tipo,
+    sub_actividad: modalCtx.catDisplay,
+    trimestre: modalCtx.trim,
+    cantidad: cant,
+    motivo: sust,
+    usuario: usuario
+  }).then(function(ok) {
+    btn.disabled = false;
+    sp.style.display = 'none';
+    tx.textContent = '\uD83D\uDCBE Guardar';
+    if (ok) {
+      al.className = 'malerta ok';
+      al.textContent = 'Guardado correctamente.';
+      setTimeout(function() { cerrarModal(); cargarDatos(); }, 1200);
+    } else {
+      al.className = 'malerta err';
+      al.textContent = 'Error al guardar. Intenta nuevamente.';
+    }
+  });
+}
+
+function verPanel(id, btn) {
+  var panels = document.querySelectorAll('.panel');
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove('on');
+  var btns = document.querySelectorAll('.nb');
+  for (var j = 0; j < btns.length; j++) btns[j].classList.remove('on');
+  document.getElementById('panel-' + id).classList.add('on');
+  btn.classList.add('on');
+  if (id === 'historial') cargarHistorial();
+}
+
+function cargarHistorial() {
+  var body = document.getElementById('histBody');
+  body.innerHTML = '<div class="empty">&#x23F3; Cargando...</div>';
+  var q = 'ejecucion_poi?select=*&order=fecha_hora.desc&limit=500';
+  var fg = document.getElementById('fg').value;
+  var ft = document.getElementById('ft').value;
+  var ftr = document.getElementById('ftr').value;
+  if (fg) q += '&gerencia=eq.' + fg;
+  if (ft) q += '&tipo_actividad=eq.' + encodeURIComponent(ft);
+  if (ftr) q += '&trimestre=eq.' + encodeURIComponent(ftr);
+  apiGet(q).then(function(datos) {
+    histCache = Array.isArray(datos) ? datos : [];
+    if (!histCache.length) {
+      body.innerHTML = '<div class="empty">&#x1F4ED; No hay registros con esos filtros.</div>';
+      document.getElementById('conteo').textContent = '';
+      return;
+    }
+    document.getElementById('conteo').textContent = histCache.length + ' registro' + (histCache.length !== 1 ? 's' : '');
+    var bG = {GPNAIS:'b1', GSAM:'b2', GAPR:'b3', OIIS:'b4'};
+    var bT = {'Formulacion':'b5', 'Monitoreo':'b2', 'Asistencia Tecnica':'b3', 'Otras Actividades':'b4'};
+    var h = '<table class="htable"><thead><tr><th>Fecha/Hora</th><th>Gerencia</th><th>Tipo</th><th>Sub Actividad</th><th>Trimestre</th><th>Cant.</th><th>Sustento</th><th>Usuario</th><th>Acción</th></tr></thead><tbody>';
+    histCache.forEach(function(r) {
+      var f = new Date(r.fecha_hora).toLocaleString('es-PE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      h += '<tr>';
+      h += '<td><span class="ts">' + f + '</span></td>';
+      h += '<td><span class="badge ' + (bG[r.gerencia]||'') + '">' + r.gerencia + '</span></td>';
+      h += '<td><span class="badge ' + (bT[r.tipo_actividad]||'') + '">' + r.tipo_actividad + '</span></td>';
+      h += '<td style="font-size:11px;max-width:180px;">' + (r.sub_actividad||'') + '</td>';
+      h += '<td style="font-size:11px;font-weight:600;">' + r.trimestre + '</td>';
+      h += '<td><span class="mono">' + r.cantidad + '</span></td>';
+      h += '<td style="font-size:11px;color:#64748b;max-width:240px;">' + (r.motivo||'') + '</td>';
+      h += '<td style="font-size:11px;">' + (r.usuario||'') + '</td>';
+      h += '<td><button onclick="eliminarRegistro(\'' + r.id + '\')" style="padding:4px 10px;background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;border-radius:6px;font-family:Sora,sans-serif;font-size:11px;font-weight:700;cursor:pointer;" title="Eliminar este registro">&#x1F5D1; Borrar</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    body.innerHTML = h;
+  }).catch(function() {
+    body.innerHTML = '<div class="empty">&#x274C; Error al conectar con la base de datos.</div>';
+  });
+}
+
+function eliminarRegistro(id) {
+  if (!confirm('¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer.')) return;
+  fetch(SURL + '/rest/v1/ejecucion_poi?id=eq.' + id, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SKEY,
+      'Authorization': 'Bearer ' + SKEY,
+      'Content-Type': 'application/json'
+    }
+  }).then(function(r) {
+    if (r.ok) {
+      alert('Registro eliminado correctamente.');
+      cargarHistorial();
+      cargarDatos();
+    } else {
+      alert('Error al eliminar. Intenta nuevamente.');
+    }
+  }).catch(function() {
+    alert('Error de conexión al eliminar.');
+  });
+}
+
+function exportarCSV() {
+  if (!histCache.length) { alert('No hay datos para descargar. Abre el Historial primero.'); return; }
+  var cols = ['Fecha/Hora','Gerencia','Tipo Actividad','Sub Actividad','Trimestre','Cantidad','Sustento','Usuario'];
+  var csv = '\uFEFF' + cols.join(';') + '\n';
+  histCache.forEach(function(r) {
+    var fila = [
+      new Date(r.fecha_hora).toLocaleString('es-PE'),
+      r.gerencia, r.tipo_actividad, r.sub_actividad,
+      r.trimestre, r.cantidad, r.motivo, r.usuario
+    ];
+    csv += fila.map(function(v) { return '"' + String(v||'').replace(/"/g,'""') + '"'; }).join(';') + '\n';
+  });
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'Historial_POI_2026_' + new Date().toISOString().split('T')[0] + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+cargarDatos();
+setInterval(cargarDatos, 30000);
 </script>
 </body>
 </html>
