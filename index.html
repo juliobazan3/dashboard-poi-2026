@@ -500,10 +500,13 @@ function guardarRegistro() {
   sp.style.display = 'block';
   tx.textContent = 'Guardando...';
   var usuario = document.getElementById('usuarioSel').value;
+  var subActFinal = document.getElementById('msubact').value || modalCtx.catDisplay;
+  var actOpFinal = document.getElementById('mact') ? document.getElementById('mact').textContent : '';
   apiPost({
     gerencia: modalCtx.ger,
     tipo_actividad: modalCtx.tipo,
-    sub_actividad: modalCtx.catDisplay,
+    sub_actividad: subActFinal,
+    actividad_operativa: actOpFinal,
     trimestre: modalCtx.trim,
     cantidad: cant,
     motivo: sust,
