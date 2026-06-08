@@ -467,6 +467,8 @@ function guardarRegistro() {
   var cant = parseInt(document.getElementById('mcant').value);
   var sust = document.getElementById('msust').value.trim();
   var al = document.getElementById('malerta');
+  var subActVal = document.getElementById('msubact').value;
+if (!subActVal) { al.className='malerta err'; al.textContent='Debes seleccionar una Sub Actividad.'; return; }
   if (!cant || cant < 1) { al.className='malerta err'; al.textContent='Ingresa una cantidad v\u00e1lida (m\u00ednimo 1).'; return; }
   if (!sust) { al.className='malerta err'; al.textContent='El sustento es obligatorio.'; return; }
   var btn=document.getElementById('bok'), sp=document.getElementById('spin'), tx=document.getElementById('boktxt');
