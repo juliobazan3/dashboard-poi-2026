@@ -17,11 +17,13 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--gs);}
 .header{background:linear-gradient(135deg,var(--azul),var(--azulm));color:white;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(26,58,92,.3);}
 .header h1{font-size:17px;font-weight:700;}
 .header p{font-size:11px;opacity:.7;margin-top:2px;}
-.nav{display:flex;gap:8px;}
+.nav{display:flex;gap:8px;align-items:center;}
 .nb{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;transition:.2s;}
 .nb.on{background:white;color:var(--azul);}
 .nb:not(.on){background:rgba(255,255,255,.12);color:white;}
 .nb:hover:not(.on){background:rgba(255,255,255,.22);}
+.btn-salir{padding:7px 16px;border-radius:8px;border:1.5px solid rgba(255,255,255,.5);cursor:pointer;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;background:rgba(220,38,38,.25);color:white;transition:.2s;display:flex;align-items:center;gap:6px;}
+.btn-salir:hover{background:rgba(220,38,38,.55);border-color:white;}
 .panel{display:none;} .panel.on{display:block;}
 .main{max-width:1300px;margin:0 auto;padding:24px 28px;}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
@@ -99,6 +101,7 @@ textarea.finput{resize:vertical;min-height:90px;font-size:13px;}
   <div class="nav">
     <button class="nb on" onclick="verPanel('consolidado',this)">&#x1F4CA; Consolidado</button>
     <button class="nb" onclick="verPanel('historial',this)">&#x1F4CB; Historial</button>
+    <button class="btn-salir" onclick="if(confirm('¿Deseas cerrar esta página?'))window.close();">&#x274C; Salir</button>
   </div>
 </div>
 
@@ -236,12 +239,12 @@ textarea.finput{resize:vertical;min-height:90px;font-size:13px;}
         <option>GPNAIS</option><option>GSAM</option><option>GAPR</option><option>OIIS</option>
       </select>
       <select class="fsel" id="ft" onchange="cargarHistorial()">
-  <option value="">Todos los tipos</option>
-  <option value="Formulacion">Formulación</option>
-  <option value="Monitoreo">Monitoreo</option>
-  <option value="Asistencia Tecnica">Asistencia Técnica</option>
-  <option value="Estudio de Prevalencia">Estudio de Prevalencia</option>
-</select>
+        <option value="">Todos los tipos</option>
+        <option value="Formulacion">Formulación</option>
+        <option value="Monitoreo">Monitoreo</option>
+        <option value="Asistencia Tecnica">Asistencia Técnica</option>
+        <option value="Estudio de Prevalencia">Estudio de Prevalencia</option>
+      </select>
       <select class="fsel" id="ftr" onchange="cargarHistorial()">
         <option value="">Todos los trimestres</option>
         <option>T-I 2026</option><option>T-II 2026</option>
@@ -331,7 +334,122 @@ var TMAP = {
   'Estudio de Prevalencia':'Estudio de Prevalencia'
 };
 
-var SUB_ACTS = {"GPNAIS":{"Formulacion":[{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización de los requisitos técnicos para la implementación de las UPSS Ocupacional en EsSalud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar el documento técnico de fortalecimiento de los cuidados críticos en el Seguro Social de Salud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar la Normativa para la organización y funcionamiento del sistema de emergencias y urgencias del Seguro Social de Salud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar las Normas para optimizar la distribución de las camas hospitalarias en EsSalud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Criterios de priorización del parto por cesárea"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Manejo no farmacológico de pacientes con HTA, DM, sobrepeso y Obesidad"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Manual del Cuidado Integral de la Salud Mental en EsSalud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Norma para la Atención Integral de la TB en EsSalud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documento normativo: Actualización Manual de Procedimientos Anatomía Patológica"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización del Manual para obtención y uso racional de la sangre en ESSALUD"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documento normativo: Actualización Manual Procedimientos Psicología MAPRO-2026"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documento normativo: Actualización Manual Procedimientos Trabajo Social MAPRO-2026"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Formulación DTO Manual del Programa de Higiene y Saneamiento en Nutrición en EsSalud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Diagnóstico Situacional de las Unidades de Soporte Nutricional en EsSalud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Guía de actividades asistenciales de profesionales Químicos Farmacéuticos de ESSALUD"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización Directiva Disposiciones para la Atención Ambulatoria en IPRESS de ESSALUD"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización Directiva Norma Prestaciones de Salud de Atención Domiciliaria en ESSALUD"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizacion Directiva Norma para la Referencia y Contrarreferencia en el Seguro Social de Salud"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Directiva de Acceso, Registro y Uso de Información en el Sistema ESSI de ESSALUD"},{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Formular Norma para la conformación y funcionamiento de las redes funcionales de salud"}],"Monitoreo":[{"act":"Supervisión a las IPRESS en el cumplimiento de Normas de Atención Integral de Salud","sub":"Supervisiones de las actividades preparatorias de la categorización o recategorización de las IPRESS propias de ESSALUD"}],"AsistenciaTecnica":[{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre Enfermedades Raras y Huérfanas"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre especialidades de apoyo en Salud Ocupacional"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Emergencias"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Cuidados Críticos - Cuidados Intensivos"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Materna"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Análisis de casos de muerte materna"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: HTA-DM"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Mental"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: VIH/SIDA"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Prevención y Control de la TB"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Enfermedad Osteomuscular y tejido conectivo"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Psicología en ESSI"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Trabajo Social en ESSI"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Psicología EsSalud 2026"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Trabajo Social EsSalud 2026"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Manual obtención de sangre y componentes en ESSALUD"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Anatomía Patológica EsSalud"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Programa Higiene y Saneamiento en Nutrición EsSalud"},{"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre gestión de Servicios/Unidades de Nutrición"},{"act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Asistencias Técnicas sobre actividades preparatorias de categorización/recategorización de IPRESS"},{"act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Realizar asistencia técnica virtual de documentos normativos"}],"Otras":[]},"GAPR":{"Formulacion":[{"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo Medicina Complementaria: GUÍA METODOLÓGICA PREPARADOS FITO FARMACEUTICOS"},{"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo: Actualización DIRECTIVA N°008 NORMAS GENERALES CENTROS MEDICINA COMPLEMENTARIA"},{"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Control del Crecimiento y Desarrollo del adolescente en EsSalud"},{"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Cuidado integral de salud del adulto en EsSalud"},{"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Psicoprofilaxis del Climaterio en EsSalud"},{"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Herramientas para actividades educativas de intervención nutricional en EsSalud"}],"Monitoreo":[{"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Monitorear y evaluar el cumplimiento de los documentos normativos de Medicina Complementaria"},{"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar la normativa de inmunizaciones, crecimiento y desarrollo"},{"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las normativas de lucha contra la anemia"},{"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las disposiciones de la normativa PREVENIR"},{"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normativas Etapa vida adulto: prevención del Cáncer y salud materna"},{"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normas del modelo de cuidado integral incluyendo ENT y salud mental"}],"AsistenciaTecnica":[{"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Realizar asistencia técnica: Medicina Complementaria y Estrategia PREVENIR en Redes Asistenciales"},{"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Cuidado integral de salud del adulto mayor en EsSalud"},{"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Control del Crecimiento y Desarrollo del adolescente en EsSalud"},{"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Cuidado Integral para prevención y control de la anemia en EsSalud"},{"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Manual Promoción de la Salud y Prevención en Nutrición de EsSalud"},{"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Psicoprofilaxis del Climaterio en EsSalud"}],"Otras":[{"act":"Implementacion de herramienta informática para Estrategia Prevenir EsSalud","sub":"Implementacion de herramienta informática para registrar información de atenciones primarias en Estrategia Prevenir EsSalud"}]},"GSAM":{"Formulacion":[{"act":"Aprobacion de documentos normativos de Salud Ambiental","sub":"Plan de Trabajo: Abordaje Integral Población Asegurada Expuesta a Metales Pesados y Sustancias Químicas Tóxicas"},{"act":"Aprobacion de documentos normativos de Salud Ambiental","sub":"Directiva de Gestión y Manejo de Residuos Sólidos en el Seguro Social de Salud - ESSALUD"}],"Monitoreo":[{"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Seguimiento de implementación Plan de Trabajo: Abordaje Integral Población Expuesta a Metales Pesados"},{"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Evaluación del control y manejo de residuos sólidos en las IPRESS de ESSALUD"},{"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Evaluación de las disposiciones para la limpieza y desinfección de ambientes en las IPRESS de ESSALUD"},{"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Normas de Bioseguridad en el Seguro Social de Salud - ESSALUD"},{"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Seguimiento Normas ISO 14001-2015 Gestión Ambiental en hospitales Alcantara, Mongrut, Voto Bernales"},{"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Huella de carbono en Hospital Suarez Angamos y Hospital Emergencias Grau"}],"AsistenciaTecnica":[{"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Asistencia Tecnica sobre Directiva de Gestión y Manejo de Residuos Sólidos en ESSALUD"},{"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Asistencia Tecnica sobre Normas para medidas de ecoeficiencia en ESSALUD"},{"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Asistencia Tecnica sobre Norma Técnica para la Limpieza y Desinfección"},{"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Fortalecimiento IPRESS sobre abordaje integral de salud en población expuesta a metales pesados"},{"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Monitorear el Programa de Adecuación y Manejo Ambiental en las IPRESS a nivel nacional"},{"act":"Realizar asistencia técnica ISO 14001 Gestión Ambiental","sub":"Realizar Asistencia Tecnica en Normas ISO 14001 Gestión Ambiental"}]},"OIIS":{"Formulacion":[{"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar documentos normativos de Inteligencia e Información Sanitaria: Actualización Directiva de Vigilancia de Brotes, Epidemias y EVISAP"}],"AsistenciaTecnica":[{"act":"Asistencia Técnica para el Fortalecimiento de la Red de Inteligencia Sanitaria","sub":"Realizar asistencia técnica presencial para el fortalecimiento de la Red de Inteligencia Sanitaria: 04 Reuniones Macrorregionales, 01 Reunión nacional"},{"act":"Asistencia Técnica para el Fortalecimiento de la Red de Inteligencia Sanitaria","sub":"Desarrollar e implementar tableros de información epidemiológica: Brotes y Contingencias / Gestión de Mortalidad-CGM / Mortalidad Materna y Perinatal"}],"EstudiodePrevalencia":[{"act":"Desarrollo de Estudios Epidemiológicos","sub":"Elaboración de Estudios de Prevalencia Puntual de Infecciones Intrahospitalarias"}]}};
+var SUB_ACTS = {
+  "GPNAIS":{
+    "Formulacion":[
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización de los requisitos técnicos para la implementación de las UPSS Ocupacional en EsSalud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar el documento técnico de fortalecimiento de los cuidados críticos en el Seguro Social de Salud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar la Normativa para la organización y funcionamiento del sistema de emergencias y urgencias del Seguro Social de Salud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar las Normas para optimizar la distribución de las camas hospitalarias en EsSalud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Criterios de priorización del parto por cesárea"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Manejo no farmacológico de pacientes con HTA, DM, sobrepeso y Obesidad"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Manual del Cuidado Integral de la Salud Mental en EsSalud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documentos normativos: Norma para la Atención Integral de la TB en EsSalud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documento normativo: Actualización Manual de Procedimientos Anatomía Patológica"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización del Manual para obtención y uso racional de la sangre en ESSALUD"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documento normativo: Actualización Manual Procedimientos Psicología MAPRO-2026"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Documento normativo: Actualización Manual Procedimientos Trabajo Social MAPRO-2026"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Formulación DTO Manual del Programa de Higiene y Saneamiento en Nutrición en EsSalud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Diagnóstico Situacional de las Unidades de Soporte Nutricional en EsSalud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Guía de actividades asistenciales de profesionales Químicos Farmacéuticos de ESSALUD"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización Directiva Disposiciones para la Atención Ambulatoria en IPRESS de ESSALUD"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualización Directiva Norma Prestaciones de Salud de Atención Domiciliaria en ESSALUD"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizacion Directiva Norma para la Referencia y Contrarreferencia en el Seguro Social de Salud"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Aprobar Directiva de Acceso, Registro y Uso de Información en el Sistema ESSI de ESSALUD"},
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Formular Norma para la conformación y funcionamiento de las redes funcionales de salud"}
+    ],
+    "Monitoreo":[
+      {"act":"Supervisión a las IPRESS en el cumplimiento de Normas de Atención Integral de Salud","sub":"Supervisiones de las actividades preparatorias de la categorización o recategorización de las IPRESS propias de ESSALUD"}
+    ],
+    "AsistenciaTecnica":[
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre Enfermedades Raras y Huérfanas"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre especialidades de apoyo en Salud Ocupacional"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Emergencias"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Cuidados Críticos - Cuidados Intensivos"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Materna"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Análisis de casos de muerte materna"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: HTA-DM"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Mental"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: VIH/SIDA"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Prevención y Control de la TB"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Enfermedad Osteomuscular y tejido conectivo"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Psicología en ESSI"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Trabajo Social en ESSI"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Psicología EsSalud 2026"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Trabajo Social EsSalud 2026"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Manual obtención de sangre y componentes en ESSALUD"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Anatomía Patológica EsSalud"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Programa Higiene y Saneamiento en Nutrición EsSalud"},
+      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre gestión de Servicios/Unidades de Nutrición"},
+      {"act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Asistencias Técnicas sobre actividades preparatorias de categorización/recategorización de IPRESS"},
+      {"act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Realizar asistencia técnica virtual de documentos normativos"}
+    ],
+    "Otras":[]
+  },
+  "GAPR":{
+    "Formulacion":[
+      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo Medicina Complementaria: GUÍA METODOLÓGICA PREPARADOS FITO FARMACEUTICOS"},
+      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo: Actualización DIRECTIVA N°008 NORMAS GENERALES CENTROS MEDICINA COMPLEMENTARIA"},
+      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Control del Crecimiento y Desarrollo del adolescente en EsSalud"},
+      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Cuidado integral de salud del adulto en EsSalud"},
+      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Psicoprofilaxis del Climaterio en EsSalud"},
+      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Herramientas para actividades educativas de intervención nutricional en EsSalud"}
+    ],
+    "Monitoreo":[
+      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Monitorear y evaluar el cumplimiento de los documentos normativos de Medicina Complementaria"},
+      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar la normativa de inmunizaciones, crecimiento y desarrollo"},
+      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las normativas de lucha contra la anemia"},
+      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las disposiciones de la normativa PREVENIR"},
+      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normativas Etapa vida adulto: prevención del Cáncer y salud materna"},
+      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normas del modelo de cuidado integral incluyendo ENT y salud mental"}
+    ],
+    "AsistenciaTecnica":[
+      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Realizar asistencia técnica: Medicina Complementaria y Estrategia PREVENIR en Redes Asistenciales"},
+      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Cuidado integral de salud del adulto mayor en EsSalud"},
+      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Control del Crecimiento y Desarrollo del adolescente en EsSalud"},
+      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Cuidado Integral para prevención y control de la anemia en EsSalud"},
+      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Manual Promoción de la Salud y Prevención en Nutrición de EsSalud"},
+      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Psicoprofilaxis del Climaterio en EsSalud"}
+    ],
+    "Otras":[
+      {"act":"Implementacion de herramienta informática para Estrategia Prevenir EsSalud","sub":"Implementacion de herramienta informática para registrar información de atenciones primarias en Estrategia Prevenir EsSalud"}
+    ]
+  },
+  "GSAM":{
+    "Formulacion":[
+      {"act":"Aprobacion de documentos normativos de Salud Ambiental","sub":"Plan de Trabajo: Abordaje Integral Población Asegurada Expuesta a Metales Pesados y Sustancias Químicas Tóxicas"},
+      {"act":"Aprobacion de documentos normativos de Salud Ambiental","sub":"Directiva de Gestión y Manejo de Residuos Sólidos en el Seguro Social de Salud - ESSALUD"}
+    ],
+    "Monitoreo":[
+      {"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Seguimiento de implementación Plan de Trabajo: Abordaje Integral Población Expuesta a Metales Pesados"},
+      {"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Evaluación del control y manejo de residuos sólidos en las IPRESS de ESSALUD"},
+      {"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Evaluación de las disposiciones para la limpieza y desinfección de ambientes en las IPRESS de ESSALUD"},
+      {"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Normas de Bioseguridad en el Seguro Social de Salud - ESSALUD"},
+      {"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Seguimiento Normas ISO 14001-2015 Gestión Ambiental en hospitales Alcantara, Mongrut, Voto Bernales"},
+      {"act":"Monitorear el cumplimiento de documentos normativos de Salud Ambiental a nivel nacional","sub":"Huella de carbono en Hospital Suarez Angamos y Hospital Emergencias Grau"}
+    ],
+    "AsistenciaTecnica":[
+      {"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Asistencia Tecnica sobre Directiva de Gestión y Manejo de Residuos Sólidos en ESSALUD"},
+      {"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Asistencia Tecnica sobre Normas para medidas de ecoeficiencia en ESSALUD"},
+      {"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Asistencia Tecnica sobre Norma Técnica para la Limpieza y Desinfección"},
+      {"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Fortalecimiento IPRESS sobre abordaje integral de salud en población expuesta a metales pesados"},
+      {"act":"Realizar asistencia técnica para fortalecimiento de IPRESS sobre normas de Salud Ambiental","sub":"Monitorear el Programa de Adecuación y Manejo Ambiental en las IPRESS a nivel nacional"},
+      {"act":"Realizar asistencia técnica ISO 14001 Gestión Ambiental","sub":"Realizar Asistencia Tecnica en Normas ISO 14001 Gestión Ambiental"}
+    ]
+  },
+  "OIIS":{
+    "Formulacion":[
+      {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Actualizar documentos normativos de Inteligencia e Información Sanitaria: Actualización Directiva de Vigilancia de Brotes, Epidemias y EVISAP"}
+    ],
+    "AsistenciaTecnica":[
+      {"act":"Asistencia Técnica para el Fortalecimiento de la Red de Inteligencia Sanitaria","sub":"Realizar asistencia técnica presencial para el fortalecimiento de la Red de Inteligencia Sanitaria: 04 Reuniones Macrorregionales, 01 Reunión nacional"}
+    ],
+    "EstudiodePrevalencia":[
+      {"act":"Desarrollo de Estudios Epidemiológicos","sub":"Elaboración de Estudios de Prevalencia Puntual de Infecciones Intrahospitalarias"},
+      {"act":"Desarrollo de Estudios Epidemiológicos","sub":"Desarrollar e implementar tableros de información epidemiológica: Brotes y Contingencias / Gestión de Mortalidad-CGM / Mortalidad Materna y Perinatal"}
+    ]
+  }
+};
 
 var CATS_DISPLAY = {
   'Formulacion Documentos':'Formulaci\u00f3n Documentos',
@@ -470,8 +588,8 @@ function guardarRegistro() {
   var sust = document.getElementById('msust').value.trim();
   var al = document.getElementById('malerta');
   var subActVal = document.getElementById('msubact').value;
-if (!subActVal) { al.className='malerta err'; al.textContent='Debes seleccionar una Sub Actividad.'; return; }
-  if (!cant || cant < 1) { al.className='malerta err'; al.textContent='Ingresa una cantidad v\u00e1lida (m\u00ednimo 1).'; return; }
+  if (!subActVal) { al.className='malerta err'; al.textContent='Debes seleccionar una Sub Actividad.'; return; }
+  if (!cant || cant < 1) { al.className='malerta err'; al.textContent='Ingresa una cantidad válida (mínimo 1).'; return; }
   if (!sust) { al.className='malerta err'; al.textContent='El sustento es obligatorio.'; return; }
   var btn=document.getElementById('bok'), sp=document.getElementById('spin'), tx=document.getElementById('boktxt');
   btn.disabled=true; sp.style.display='block'; tx.textContent='Guardando...';
