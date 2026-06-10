@@ -265,17 +265,32 @@ textarea.finput{resize:vertical;min-height:90px;font-size:13px;}
     <div class="modal-sub">Los datos se guardar&aacute;n con fecha y hora autom&aacute;tica.</div>
     <div class="minfo">
       <div><strong>Gerencia:</strong> <span id="mg"></span></div>
-      <div><strong>Actividad Operativa:</strong> <span id="mact" style="font-size:11px;"></span></div>
-      <div><strong>Tipo:</strong> <span id="mt"></span></div>
-      <div><strong>Trimestre:</strong> <span id="mtr"></span></div>
+      <div><strong>Tipo:</strong> <span id="mt"></span> &nbsp;&nbsp; <strong>Trimestre:</strong> <span id="mtr"></span></div>
       <div><strong>Ejecuci&oacute;n actual:</strong> <span id="ma" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--azulm);"></span></div>
     </div>
+
+    <!-- PASO 1: Sub-Gerencia -->
     <div style="margin-bottom:14px;">
-      <label class="flabel">Denominaci&oacute;n de la Sub Actividad *</label>
-      <select id="msubact" class="finput" style="font-size:12px;">
-        <option value="">— Seleccionar Sub Actividad —</option>
+      <label class="flabel">Sub-Gerencia *</label>
+      <select id="msg-sel" class="finput" style="font-size:13px;" onchange="filtrarSubActs()">
+        <option value="">— Seleccionar Sub-Gerencia —</option>
       </select>
     </div>
+
+    <!-- PASO 2: Sub Actividad (se llena al elegir sub-gerencia) -->
+    <div style="margin-bottom:14px;" id="wrap-subact">
+      <label class="flabel">Denominaci&oacute;n de la Sub Actividad *</label>
+      <select id="msubact" class="finput" style="font-size:12px;" onchange="actualizarActOp()">
+        <option value="">— Primero selecciona Sub-Gerencia —</option>
+      </select>
+    </div>
+
+    <!-- Actividad operativa (auto) -->
+    <div style="margin-bottom:14px;background:#f8fafc;border-radius:8px;padding:10px 12px;font-size:11px;color:var(--gm);display:none;" id="wrap-actop">
+      <strong style="color:var(--azul);">Actividad Operativa:</strong>
+      <div id="mact" style="margin-top:4px;color:var(--gs);"></div>
+    </div>
+
     <div style="margin-bottom:14px;">
       <label class="flabel">Cantidad a agregar *</label>
       <input type="number" id="mcant" class="finput" min="1" max="99" placeholder="Ej: 1" />
@@ -359,60 +374,60 @@ var SUB_ACTS = {
       {"act":"Formulación y/o Actualización de Documentos Normativos","sub":"Formular Norma para la conformación y funcionamiento de las redes funcionales de salud"}
     ],
     "Monitoreo":[
-      {"act":"Supervisión a las IPRESS en el cumplimiento de Normas de Atención Integral de Salud","sub":"Supervisiones de las actividades preparatorias de la categorización o recategorización de las IPRESS propias de ESSALUD"}
+      {"sg":"SGNSS","act":"Supervisión a las IPRESS en el cumplimiento de Normas de Atención Integral de Salud","sub":"Supervisiones de las actividades preparatorias de la categorización o recategorización de las IPRESS propias de ESSALUD"}
     ],
     "AsistenciaTecnica":[
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre Enfermedades Raras y Huérfanas"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre especialidades de apoyo en Salud Ocupacional"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Emergencias"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Cuidados Críticos - Cuidados Intensivos"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Materna"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Análisis de casos de muerte materna"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: HTA-DM"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Mental"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: VIH/SIDA"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Prevención y Control de la TB"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Enfermedad Osteomuscular y tejido conectivo"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Psicología en ESSI"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Trabajo Social en ESSI"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Psicología EsSalud 2026"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Trabajo Social EsSalud 2026"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Manual obtención de sangre y componentes en ESSALUD"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Anatomía Patológica EsSalud"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Programa Higiene y Saneamiento en Nutrición EsSalud"},
-      {"act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre gestión de Servicios/Unidades de Nutrición"},
-      {"act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Asistencias Técnicas sobre actividades preparatorias de categorización/recategorización de IPRESS"},
-      {"act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Realizar asistencia técnica virtual de documentos normativos"}
+      {"sg":"SGPE",    "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre Enfermedades Raras y Huérfanas"},
+      {"sg":"SGPE",    "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre especialidades de apoyo en Salud Ocupacional"},
+      {"sg":"SGPE",    "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Emergencias"},
+      {"sg":"SGPE",    "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre la normativa de Cuidados Críticos - Cuidados Intensivos"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Materna"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Análisis de casos de muerte materna"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: HTA-DM"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Salud Mental"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: VIH/SIDA"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Prevención y Control de la TB"},
+      {"sg":"SGNAPS",  "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual y/o presencial: Enfermedad Osteomuscular y tejido conectivo"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Psicología en ESSI"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Implementación Formatos Trabajo Social en ESSI"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Psicología EsSalud 2026"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Trabajo Social EsSalud 2026"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual: Manual obtención de sangre y componentes en ESSALUD"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Prestaciones Servicio de Anatomía Patológica EsSalud"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica: Manual Programa Higiene y Saneamiento en Nutrición EsSalud"},
+      {"sg":"SGNADYT", "act":"Realizar asistencia técnica virtual orientada a mejorar las prestaciones de Salud","sub":"Realizar asistencia Técnica Virtual sobre gestión de Servicios/Unidades de Nutrición"},
+      {"sg":"SGNSS",   "act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Asistencias Técnicas sobre actividades preparatorias de categorización/recategorización de IPRESS"},
+      {"sg":"SGNSS",   "act":"Brindar asistencia técnica a órganos desconcentrados para mejorar prestaciones de Salud","sub":"Realizar asistencia técnica virtual de documentos normativos"}
     ],
     "Otras":[]
   },
   "GAPR":{
     "Formulacion":[
-      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo Medicina Complementaria: GUÍA METODOLÓGICA PREPARADOS FITO FARMACEUTICOS"},
-      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo: Actualización DIRECTIVA N°008 NORMAS GENERALES CENTROS MEDICINA COMPLEMENTARIA"},
-      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Control del Crecimiento y Desarrollo del adolescente en EsSalud"},
-      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Cuidado integral de salud del adulto en EsSalud"},
-      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Psicoprofilaxis del Climaterio en EsSalud"},
-      {"act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Herramientas para actividades educativas de intervención nutricional en EsSalud"}
+      {"sg":"SGMC",   "act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo Medicina Complementaria: GUÍA METODOLÓGICA PREPARADOS FITO FARMACEUTICOS"},
+      {"sg":"SGMC",   "act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Aprobacion documento normativo: Actualización DIRECTIVA N°008 NORMAS GENERALES CENTROS MEDICINA COMPLEMENTARIA"},
+      {"sg":"SGPSYPE","act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Control del Crecimiento y Desarrollo del adolescente en EsSalud"},
+      {"sg":"SGPSYPE","act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Cuidado integral de salud del adulto en EsSalud"},
+      {"sg":"SGPSYPE","act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Psicoprofilaxis del Climaterio en EsSalud"},
+      {"sg":"SGPSYPE","act":"Formulación y/o actualización de Documentos Normativos para fortalecer la Atención Primaria","sub":"Formulación DTO: Herramientas para actividades educativas de intervención nutricional en EsSalud"}
     ],
     "Monitoreo":[
-      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Monitorear y evaluar el cumplimiento de los documentos normativos de Medicina Complementaria"},
-      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar la normativa de inmunizaciones, crecimiento y desarrollo"},
-      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las normativas de lucha contra la anemia"},
-      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las disposiciones de la normativa PREVENIR"},
-      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normativas Etapa vida adulto: prevención del Cáncer y salud materna"},
-      {"act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normas del modelo de cuidado integral incluyendo ENT y salud mental"}
+      {"sg":"SGMC",  "act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Monitorear y evaluar el cumplimiento de los documentos normativos de Medicina Complementaria"},
+      {"sg":"SGCPAP","act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar la normativa de inmunizaciones, crecimiento y desarrollo"},
+      {"sg":"SGCPAP","act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las normativas de lucha contra la anemia"},
+      {"sg":"SGCPAP","act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar las disposiciones de la normativa PREVENIR"},
+      {"sg":"SGCPAP","act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normativas Etapa vida adulto: prevención del Cáncer y salud materna"},
+      {"sg":"SGCPAP","act":"Monitoreo a IPRESS en el cumplimiento de normas de atención primaria y medicina complementaria","sub":"Controlar, monitorear y/o supervisar normas del modelo de cuidado integral incluyendo ENT y salud mental"}
     ],
     "AsistenciaTecnica":[
-      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Realizar asistencia técnica: Medicina Complementaria y Estrategia PREVENIR en Redes Asistenciales"},
-      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Cuidado integral de salud del adulto mayor en EsSalud"},
-      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Control del Crecimiento y Desarrollo del adolescente en EsSalud"},
-      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Cuidado Integral para prevención y control de la anemia en EsSalud"},
-      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Manual Promoción de la Salud y Prevención en Nutrición de EsSalud"},
-      {"act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Psicoprofilaxis del Climaterio en EsSalud"}
+      {"sg":"SGMC",  "act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Realizar asistencia técnica: Medicina Complementaria y Estrategia PREVENIR en Redes Asistenciales"},
+      {"sg":"SGPSYPE","act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Cuidado integral de salud del adulto mayor en EsSalud"},
+      {"sg":"SGPSYPE","act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Control del Crecimiento y Desarrollo del adolescente en EsSalud"},
+      {"sg":"SGPSYPE","act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Cuidado Integral para prevención y control de la anemia en EsSalud"},
+      {"sg":"SGPSYPE","act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Manual Promoción de la Salud y Prevención en Nutrición de EsSalud"},
+      {"sg":"SGPSYPE","act":"Realizar asistencia técnica presencial y/o virtual a redes asistenciales en atención primaria","sub":"Asistencia Técnica: Implantación DTO Psicoprofilaxis del Climaterio en EsSalud"}
     ],
     "Otras":[
-      {"act":"Implementacion de herramienta informática para Estrategia Prevenir EsSalud","sub":"Implementacion de herramienta informática para registrar información de atenciones primarias en Estrategia Prevenir EsSalud"}
+      {"sg":"SGCPAP","act":"Implementacion de herramienta informática para Estrategia Prevenir EsSalud","sub":"Implementacion de herramienta informática para registrar información de atenciones primarias en Estrategia Prevenir EsSalud"}
     ]
   },
   "GSAM":{
@@ -461,7 +476,94 @@ var CATS_DISPLAY = {
 
 var ejecDB = {};
 var modalCtx = null;
+var modalItems = [];
 var histCache = [];
+
+function abrirModal(ger, tipo, catDisplay, trim, ti, actual) {
+  modalCtx = {ger:ger, tipo:tipo, catDisplay:catDisplay, trim:trim, ti:ti};
+  document.getElementById('mg').textContent  = ger;
+  document.getElementById('mt').textContent  = catDisplay;
+  document.getElementById('mtr').textContent = trim;
+  document.getElementById('ma').textContent  = actual;
+  document.getElementById('mcant').value = '';
+  document.getElementById('msust').value = '';
+  document.getElementById('ccount').textContent = '0';
+  document.getElementById('mact').textContent = '';
+  document.getElementById('wrap-actop').style.display = 'none';
+
+  var tipoKey = tipo === 'Formulacion'          ? 'Formulacion'         :
+                tipo === 'Monitoreo'             ? 'Monitoreo'           :
+                tipo === 'Asistencia Tecnica'    ? 'AsistenciaTecnica'   :
+                tipo === 'Estudio de Prevalencia'? 'EstudiodePrevalencia': 'Otras';
+
+  modalItems = (SUB_ACTS[ger] && SUB_ACTS[ger][tipoKey]) ? SUB_ACTS[ger][tipoKey] : [];
+
+  // Obtener sub-gerencias únicas
+  var sgsVistas = {};
+  var sgs = [];
+  modalItems.forEach(function(item) {
+    var sg = item.sg || 'GENERAL';
+    if (!sgsVistas[sg]) { sgsVistas[sg] = true; sgs.push(sg); }
+  });
+
+  var sgSel = document.getElementById('msg-sel');
+  sgSel.innerHTML = '<option value="">— Seleccionar Sub-Gerencia —</option>';
+  sgs.forEach(function(sg) {
+    sgSel.innerHTML += '<option value="' + sg + '">' + sg + '</option>';
+  });
+
+  // Si solo hay una SG, la preseleccionamos
+  if (sgs.length === 1) {
+    sgSel.value = sgs[0];
+    filtrarSubActs();
+  } else {
+    // Reset sub-actividades
+    var sa = document.getElementById('msubact');
+    sa.innerHTML = '<option value="">— Primero selecciona Sub-Gerencia —</option>';
+  }
+
+  var al = document.getElementById('malerta');
+  al.className = 'malerta'; al.textContent = '';
+  document.getElementById('overlay').classList.add('on');
+  setTimeout(function() { sgSel.focus(); }, 100);
+}
+
+function filtrarSubActs() {
+  var sgSel = document.getElementById('msg-sel');
+  var sgVal = sgSel.value;
+  var sa = document.getElementById('msubact');
+  sa.innerHTML = '<option value="">— Seleccionar Sub Actividad —</option>';
+  document.getElementById('mact').textContent = '';
+  document.getElementById('wrap-actop').style.display = 'none';
+
+  if (!sgVal) return;
+
+  var filtrados = modalItems.filter(function(i){ return (i.sg || 'GENERAL') === sgVal; });
+  filtrados.forEach(function(item) {
+    sa.innerHTML += '<option value="' + item.sub.replace(/"/g,'&quot;') + '">' + item.sub + '</option>';
+  });
+
+  // Si solo hay una opción la preseleccionamos
+  if (filtrados.length === 1) {
+    sa.value = filtrados[0].sub;
+    actualizarActOp();
+  }
+}
+
+function actualizarActOp() {
+  var sgVal  = document.getElementById('msg-sel').value;
+  var subVal = document.getElementById('msubact').value;
+  var found  = modalItems.find(function(i){
+    return (i.sg || 'GENERAL') === sgVal && i.sub === subVal;
+  });
+  var wrap = document.getElementById('wrap-actop');
+  if (found && subVal) {
+    document.getElementById('mact').textContent = found.act;
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
 
 setInterval(function() {
   var el = document.getElementById('fhora');
@@ -548,33 +650,71 @@ function renderTabla(ger) {
 
 function abrirModal(ger, tipo, catDisplay, trim, ti, actual) {
   modalCtx = {ger:ger, tipo:tipo, catDisplay:catDisplay, trim:trim, ti:ti};
-  document.getElementById('mg').textContent = ger;
-  document.getElementById('mt').textContent = catDisplay;
+  document.getElementById('mg').textContent  = ger;
+  document.getElementById('mt').textContent  = catDisplay;
   document.getElementById('mtr').textContent = trim;
-  document.getElementById('ma').textContent = actual;
+  document.getElementById('ma').textContent  = actual;
   document.getElementById('mcant').value = '';
   document.getElementById('msust').value = '';
   document.getElementById('ccount').textContent = '0';
-  var tipoKey = tipo === 'Formulacion' ? 'Formulacion' :
-                tipo === 'Monitoreo' ? 'Monitoreo' :
-                tipo === 'Asistencia Tecnica' ? 'AsistenciaTecnica' :
-                tipo === 'Estudio de Prevalencia' ? 'EstudiodePrevalencia' : 'Otras';
-  var items = (SUB_ACTS[ger] && SUB_ACTS[ger][tipoKey]) ? SUB_ACTS[ger][tipoKey] : [];
-  var sel = document.getElementById('msubact');
-  sel.innerHTML = '<option value="">— Seleccionar Sub Actividad —</option>';
-  items.forEach(function(item) {
-    sel.innerHTML += '<option value="' + item.sub.replace(/"/g,'&quot;') + '">' + item.sub + '</option>';
+  document.getElementById('mact').textContent = '';
+  document.getElementById('wrap-actop').style.display = 'none';
+
+  var tipoKey = tipo === 'Formulacion'          ? 'Formulacion'         :
+                tipo === 'Monitoreo'             ? 'Monitoreo'           :
+                tipo === 'Asistencia Tecnica'    ? 'AsistenciaTecnica'   :
+                tipo === 'Estudio de Prevalencia'? 'EstudiodePrevalencia': 'Otras';
+  modalItems = (SUB_ACTS[ger] && SUB_ACTS[ger][tipoKey]) ? SUB_ACTS[ger][tipoKey] : [];
+
+  // Sub-gerencias únicas
+  var sgsVistas = {}, sgs = [];
+  modalItems.forEach(function(item){
+    var sg = item.sg || 'GENERAL';
+    if(!sgsVistas[sg]){ sgsVistas[sg]=true; sgs.push(sg); }
   });
-  var firstAct = items.length > 0 ? items[0].act : catDisplay;
-  document.getElementById('mact').textContent = firstAct;
-  sel.onchange = function() {
-    var found = items.find(function(i){ return i.sub === sel.value; });
-    if (found) document.getElementById('mact').textContent = found.act;
-  };
+
+  var sgSel = document.getElementById('msg-sel');
+  sgSel.innerHTML = '<option value="">— Seleccionar Sub-Gerencia —</option>';
+  sgs.forEach(function(sg){
+    sgSel.innerHTML += '<option value="'+sg+'">'+sg+'</option>';
+  });
+
+  // Reset sub-actividades
+  document.getElementById('msubact').innerHTML = '<option value="">— Primero selecciona Sub-Gerencia —</option>';
+
+  // Si solo hay una SG la preseleccionamos
+  if(sgs.length === 1){
+    sgSel.value = sgs[0];
+    filtrarSubActs();
+  }
+
   var al = document.getElementById('malerta');
   al.className = 'malerta'; al.textContent = '';
   document.getElementById('overlay').classList.add('on');
-  setTimeout(function() { document.getElementById('mcant').focus(); }, 100);
+  setTimeout(function(){ sgSel.focus(); }, 100);
+}
+
+function filtrarSubActs(){
+  var sgVal = document.getElementById('msg-sel').value;
+  var sa = document.getElementById('msubact');
+  sa.innerHTML = '<option value="">— Seleccionar Sub Actividad —</option>';
+  document.getElementById('mact').textContent = '';
+  document.getElementById('wrap-actop').style.display = 'none';
+  if(!sgVal) return;
+  var filtrados = modalItems.filter(function(i){ return (i.sg||'GENERAL')===sgVal; });
+  filtrados.forEach(function(item){
+    sa.innerHTML += '<option value="'+item.sub.replace(/"/g,'&quot;')+'">'+item.sub+'</option>';
+  });
+  if(filtrados.length === 1){ sa.value = filtrados[0].sub; actualizarActOp(); }
+}
+
+function actualizarActOp(){
+  var sgVal  = document.getElementById('msg-sel').value;
+  var subVal = document.getElementById('msubact').value;
+  var found  = modalItems.find(function(i){ return (i.sg||'GENERAL')===sgVal && i.sub===subVal; });
+  var wrap   = document.getElementById('wrap-actop');
+  if(found && subVal){ document.getElementById('mact').textContent = found.act; wrap.style.display='block'; }
+  else { wrap.style.display='none'; }
 }
 
 function cerrarModal() { document.getElementById('overlay').classList.remove('on'); }
@@ -586,18 +726,19 @@ document.getElementById('overlay').addEventListener('click', function(e) {
 function guardarRegistro() {
   var cant = parseInt(document.getElementById('mcant').value);
   var sust = document.getElementById('msust').value.trim();
-  var al = document.getElementById('malerta');
+  var al   = document.getElementById('malerta');
+  var sgVal     = document.getElementById('msg-sel').value;
   var subActVal = document.getElementById('msubact').value;
+  if (!sgVal)     { al.className='malerta err'; al.textContent='Debes seleccionar una Sub-Gerencia.'; return; }
   if (!subActVal) { al.className='malerta err'; al.textContent='Debes seleccionar una Sub Actividad.'; return; }
   if (!cant || cant < 1) { al.className='malerta err'; al.textContent='Ingresa una cantidad válida (mínimo 1).'; return; }
   if (!sust) { al.className='malerta err'; al.textContent='El sustento es obligatorio.'; return; }
   var btn=document.getElementById('bok'), sp=document.getElementById('spin'), tx=document.getElementById('boktxt');
   btn.disabled=true; sp.style.display='block'; tx.textContent='Guardando...';
-  var subActFinal = document.getElementById('msubact').value || modalCtx.catDisplay;
-  var actOpFinal = document.getElementById('mact') ? document.getElementById('mact').textContent : '';
+  var actOpFinal = document.getElementById('mact').textContent || '';
   apiPost({
-    gerencia: modalCtx.ger, tipo_actividad: modalCtx.tipo,
-    sub_actividad: subActFinal, actividad_operativa: actOpFinal,
+    gerencia: modalCtx.ger, sub_gerencia: sgVal, tipo_actividad: modalCtx.tipo,
+    sub_actividad: subActVal, actividad_operativa: actOpFinal,
     trimestre: modalCtx.trim, cantidad: cant, motivo: sust,
     usuario: document.getElementById('usuarioSel').value
   }).then(function(ok) {
@@ -631,12 +772,13 @@ function cargarHistorial() {
     document.getElementById('conteo').textContent = histCache.length + ' registro' + (histCache.length!==1?'s':'');
     var bG={GPNAIS:'b1',GSAM:'b2',GAPR:'b3',OIIS:'b4'};
     var bT={'Formulacion':'b5','Monitoreo':'b2','Asistencia Tecnica':'b3','Estudio de Prevalencia':'b4'};
-    var h='<table class="htable"><thead><tr><th>Fecha/Hora</th><th>Gerencia</th><th>Tipo</th><th>Actividad Operativa</th><th>Denominación Sub Actividad</th><th>Trimestre</th><th>Cant.</th><th>Sustento</th><th>Usuario</th><th>Acción</th></tr></thead><tbody>';
+    var h='<table class="htable"><thead><tr><th>Fecha/Hora</th><th>Gerencia</th><th>Sub-Gerencia</th><th>Tipo</th><th>Actividad Operativa</th><th>Denominación Sub Actividad</th><th>Trimestre</th><th>Cant.</th><th>Sustento</th><th>Usuario</th><th>Acción</th></tr></thead><tbody>';
     histCache.forEach(function(r) {
       var f=new Date(r.fecha_hora).toLocaleString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
       h+='<tr>';
       h+='<td><span class="ts">'+f+'</span></td>';
       h+='<td><span class="badge '+(bG[r.gerencia]||'')+'">'+r.gerencia+'</span></td>';
+      h+='<td style="font-size:11px;font-weight:700;color:var(--azulm);">'+(r.sub_gerencia||'—')+'</td>';
       h+='<td><span class="badge '+(bT[r.tipo_actividad]||'')+'">'+r.tipo_actividad+'</span></td>';
       h+='<td style="font-size:10px;max-width:160px;color:#64748b;">'+(r.actividad_operativa||'—')+'</td>';
       h+='<td style="font-size:11px;max-width:200px;">'+(r.sub_actividad||'')+'</td>';
@@ -664,10 +806,10 @@ function eliminarRegistro(id) {
 
 function exportarCSV() {
   if (!histCache.length) { alert('No hay datos. Abre el Historial primero.'); return; }
-  var cols=['Fecha/Hora','Gerencia','Tipo Actividad','Actividad Operativa','Sub Actividad','Trimestre','Cantidad','Sustento','Usuario'];
+  var cols=['Fecha/Hora','Gerencia','Sub-Gerencia','Tipo Actividad','Actividad Operativa','Sub Actividad','Trimestre','Cantidad','Sustento','Usuario'];
   var csv='\uFEFF'+cols.join(';')+'\n';
   histCache.forEach(function(r) {
-    var fila=[new Date(r.fecha_hora).toLocaleString('es-PE'),r.gerencia,r.tipo_actividad,(r.actividad_operativa||''),r.sub_actividad,r.trimestre,r.cantidad,r.motivo,r.usuario];
+    var fila=[new Date(r.fecha_hora).toLocaleString('es-PE'),r.gerencia,(r.sub_gerencia||''),r.tipo_actividad,(r.actividad_operativa||''),r.sub_actividad,r.trimestre,r.cantidad,r.motivo,r.usuario];
     csv+=fila.map(function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';}).join(';')+'\n';
   });
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
